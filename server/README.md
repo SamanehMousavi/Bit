@@ -9,38 +9,26 @@
 
 |
 
-User Collection
+Users Collection
 
 ```js
 {
-  "status": 200,
-  "_id":"use_id",
+  "_id":"user_id",
   "username": "user_name",
-  "email": "user_email"
+  "email": "user_email",
+  lists:{
+    "04/07/2023":{
+      shareWith:[user1, user2, user3],
+      task:[
+        {id:1,
+        description:taskdescription,
+        completed:false
+
+
+        }
+      ]
+    }
   }
-
-```
-
-Checklists Collection
-
-```js
-
-  {
-"_id":"checklist_id",
-"title":"checklist",
-"userId":"user_id",
-"shareWith":["user_id1", "user_id2"]
-"tasks":[
-  {
-    "taskId":"taskId1",
-    "description":"task description",
-    "completed":"false",
-
-  }
-],
-"createdAt":"creation_date",
-"updatedAt":"last_update_date"
-
   }
 
 ```

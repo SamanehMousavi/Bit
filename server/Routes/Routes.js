@@ -3,7 +3,7 @@ const {
   addlist,
   updatelist,
   deletelist,
-  getchecklists,
+  gettasklists,
   addtask,
   updatetask,
   deletetask,
@@ -11,9 +11,9 @@ const {
   deleteuser,
 } = require("../handlers/CheckListHandlers");
 
-router.get("/checklists", getchecklists);
-router.post("/checklists/addlist", addlist);
-router.post("/checklists/addtask", addtask);
-router.post("/");
+router.get("/tasklist/:date/:user", gettasklists);
+// router.post("/checklists/addlist", addlist);
+// router.post("/checklists/addtask", addtask);
+// router.post("/");
 
 module.exports = router;
