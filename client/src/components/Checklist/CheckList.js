@@ -1,5 +1,5 @@
 import { styled, keyframes } from "styled-components";
-import Header from "../Header/Header";
+import Header from "../Checklist/Header";
 import Calendar from "react-calendar";
 import { useEffect, useState } from "react";
 
@@ -24,27 +24,27 @@ const CheckList = () => {
 
   return (
     <Main>
-      <Header textColor="black" />
+      <Header />
       <Body>
-        <SideBar>
+        <CalendarContainer>
           <Calendar onChange={onChange} value={value} />
-          <Calander>Calander</Calander>
-        </SideBar>
-        <ListsContainer>
-          <List>
-            <ListHeader>
-              <TitleDate>
-                <Date> {value.toString().slice(0, 15)} </Date>
-              </TitleDate>
-              <Share>Share</Share>
-            </ListHeader>
-            <ListTasks>
-              <CheckBox></CheckBox>
-              <Task>HELLLO</Task>
-            </ListTasks>
-          </List>
-        </ListsContainer>
-        <GradientBox />
+        </CalendarContainer>
+
+        <List>
+          <ListHeader>
+            <TitleDate>
+              <Date> {value.toString().slice(0, 15)} </Date>
+            </TitleDate>
+            <Share>Share</Share>
+          </ListHeader>
+          <ListTasks>
+            <CheckBox></CheckBox>
+            <Taskline>HELLLO</Taskline>
+            <AddTask>Add Task</AddTask>
+          </ListTasks>
+        </List>
+
+        <GradientBox></GradientBox>
       </Body>
     </Main>
   );
@@ -58,11 +58,11 @@ const Main = styled.div`
 `;
 
 const Body = styled.div`
-  display: grid;
-  grid-template-columns: 30vw 70vw;
-  justify-content: center;
-  height: 85vh;
-  width: 100vw;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  position: relative;
+  align-items: center;
 `;
 
 const gradientAnimation = keyframes`
@@ -77,50 +77,76 @@ const gradientAnimation = keyframes`
 }
 `;
 const GradientBox = styled.div`
-  margin: 2rem;
+  position: absolute;
   width: 100%;
-  height: 100%;
-  background-image: linear-gradient(-30deg, #00c4cc, #ff66c4, #ffa53b);
-  background-size: 200% 200%;
+  height: 45%;
+  bottom: 0;
+  background-image: linear-gradient(-30deg, #00c4cc, #ff66c4);
+  background-size: 200%;
   animation: ${gradientAnimation} 10s linear infinite;
-  transform: skewY(-20deg);
-  border-radius: 2rem;
+  transform: skewY(-10deg);
+  z-index: -2;
 `;
 
-const SideBar = styled.div`
-  width: 100%;
-  border: 0.5rem solid blue;
-  z-index: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 2rem;
-  margin-left: 0;
+const CalendarContainer = styled.div`
+  max-width: 30%;
+  height: fit-content;
+  margin: 7%;
+  background-color: #00c4cc;
+  color: white;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+
+  .react-calendar__navigation {
+    display: flex;
+  }
+  .react-calendar__navigation__label {
+    font-weight: bold;
+    font-size: 1rem;
+  }
+  .react-calendar__navigation__arrow {
+    flex-grow: 0.333;
+  }
+  .react-calendar__month-view__weekdays {
+    text-align: center;
+    text-decoration: none;
+  }
+
+  button {
+    font-size: 1rem;
+    background-color: transparent;
+    border: 0;
+    border-radius: 3px;
+    color: white;
+    padding: 0.5rem 0.05rem;
+
+    &:hover {
+      background-color: #cb6ce6;
+    }
+
+    &:active {
+      background-color: pink;
+    }
+  }
+  .react-calendar__month-view__days__day--neighboringMonth {
+    opacity: 0.5;
+  }
+  .react-calendar__month-view__days__day--weekend {
+    color: #dfdfdf;
+  }
 `;
 
-const Calander = styled.button`
-  font-size: 2rem;
-`;
-
-const ListsContainer = styled.div`
-  border: 0.5rem solid blue;
-  height: 100vh;
-  z-index: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 2rem;
-  margin-left: 0;
-  width: 80%;
-`;
 const List = styled.div`
-  border: 0.5rem solid blue;
-  width: 50%;
-  height: 75%;
+  background-image: url("/Sticky-Note.png");
+  z-inex: 1;
+  width: 70%;
+  height: 100%;
+  margin: 2rem;
   display: flex;
   flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
 `;
 const ListHeader = styled.div`
   display: flex;
@@ -163,4 +189,6 @@ const CheckBox = styled.div`
     background-color: yellow;
   }
 `;
-const Task = styled.div``;
+const Taskline = styled.div``;
+
+const AddTask = styled.div``;

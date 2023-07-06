@@ -1,14 +1,20 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { styled } from "styled-components";
-import LoginButton from "./LoginButton";
-import LogoutButton from "./LogoutButton";
+
+import LogoutButton from "../Checklist/LogoutButton";
 
 const Header = () => {
   const navigate = useNavigate();
   return (
     <HeaderMain>
-      <Logo>Bit</Logo>
+      <Logo
+        onClick={() => {
+          navigate("/");
+        }}
+      >
+        Bit
+      </Logo>
       <TaskProject>
         <Tasks
           onClick={() => {
@@ -19,7 +25,6 @@ const Header = () => {
         </Tasks>
         <Projects>Manage Your Projects</Projects>
       </TaskProject>
-      <LoginButton />
       <LogoutButton />
     </HeaderMain>
   );
@@ -38,8 +43,7 @@ const HeaderMain = styled.div`
   width: 100vw;
 `;
 const Logo = styled.div`
-  color: white;
-
+  color: #808080;
   opacity: 1;
   font-size: 8rem;
   margin-top: 2rem;
@@ -55,30 +59,28 @@ const TaskProject = styled.div`
 `;
 
 const Projects = styled.button`
-  color: white;
-
+  color: #808080;
   opacity: 1;
   border: none;
   font-size: 2rem;
   background-color: transparent;
 
   &:hover {
-    color: yellow;
+    color: #cb6ce6;
   }
   &:active {
     scale: 0.9;
   }
 `;
 const Tasks = styled.button`
-  color: white;
-
+  color: #808080;
   opacity: 1;
   border: none;
   font-size: 2rem;
   background-color: transparent;
 
   &:hover {
-    color: yellow;
+    color: #cb6ce6;
   }
   &:active {
     scale: 0.9;

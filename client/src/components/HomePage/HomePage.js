@@ -1,10 +1,29 @@
 import { styled, keyframes } from "styled-components";
 import Header from "../Header/Header";
+import { useAuth0 } from "@auth0/auth0-react";
+import { useEffect } from "react";
 
 const HomePage = () => {
+  const { user } = useAuth0();
+  // useEffect(() => {
+  //   fetch("/addUser", {
+  //     method: "POST",
+  //     headers: {
+  //       Accept: "application/json",
+  //       "Content-Type": "application/json",
+  //     },
+  //     body: JSON.stringify(user),
+  //   })
+  //     .then((response) => response.json())
+  //     .then((parsed) => {
+  //       console.log(parsed);
+  //     })
+  //     .catch((error) => console.log(error));
+  // });
+
   return (
     <Main>
-      <GradientBox>
+      <div>
         <Header />
         <HeroSection>
           <TextBox>
@@ -14,16 +33,18 @@ const HomePage = () => {
           <ImageOne src={"images/sticky-imageone.png"} alt="Sticky notes" />
           <ImageTwo src={"images/kanban-homepage.png"} alt="Kanban board" />
         </HeroSection>
-      </GradientBox>
+        <GradientBox></GradientBox>
+      </div>
     </Main>
   );
 };
 
 export default HomePage;
 const Main = styled.div`
-  height: 100%;
-  width: fit-content;
-  margin: 0 auto;
+  width: 100vw;
+  height: 100vh;
+  margin: 0;
+  position: relative;
 `;
 
 const gradientAnimation = keyframes`
@@ -38,44 +59,45 @@ const gradientAnimation = keyframes`
 }
 `;
 const GradientBox = styled.div`
-  margin: 2rem;
-  background-image: linear-gradient(30deg, #00c4cc, #ff66c4, #ffa53b);
+  background-image: linear-gradient(40deg, #00c4cc, #ff66c4, #ffa53b);
   background-size: 200%;
-  animation: ${gradientAnimation} 10s linear infinite;
-  // transform: skewY(0deg);
-  border-radius: 2rem;
+  animation: ${gradientAnimation} 5s linear infinite;
+  transform: skew(1 rad);
+
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  top: 0;
 `;
 
 const HeroSection = styled.div`
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  grid-template-rows: repeat(2, 1fr);
-  grid-template-areas:
-    ". img1"
-    "tx img2";
-  justify-items: center;
-  height: 85%;
+  display: flex;
+  flex: 3 1 1;
+  margin-top: 5%;
+  margin-left: 10%;
+  height: 100%;
+  align-items: center;
 `;
 const TextBox = styled.div`
+  flex: 2;
   border: 1rem blue;
-  width: 40rem;
   color: black;
-  font-size: 4rem;
+  font-size: 5rem;
   grid-area: tx;
   opacity: 0.5;
-  bottom: 30rem;
 `;
 const StartButton = styled.button`
   display: block;
   margin-right: 2rem;
   opacity: 1;
-  color: White;
+  color: blue;
   padding: 1rem;
   background-color: transparent;
   border: none;
-  font-size: 2rem;
+  font-size: 1.75rem;
   &:hover {
-    color: yellow;
+    color: purple;
   }
   &:active {
     scale: 0.9;
@@ -83,13 +105,12 @@ const StartButton = styled.button`
 `;
 const ImageOne = styled.img`
   z-index: 1;
-  width: 45rem;
-  grid-area: img1;
-  align-self: end;
-  justify-self: start;
+  width: 40rem;
+  align-self: stretch;
 `;
+
 const ImageTwo = styled.img`
   z-index: 1;
   width: 35rem;
-  grid-area: img2;
+  align-self: stretch;
 `;
