@@ -1,16 +1,16 @@
 import { styled } from "styled-components";
 import { useAuth0 } from "@auth0/auth0-react";
 
-const LogoutButton = () => {
-  const { logout, isAuthenticated } = useAuth0();
+const LoginButton = () => {
+  const { loginWithRedirect, isAuthenticated } = useAuth0();
 
   return (
-    isAuthenticated && (
-      <Signinbutton onClick={() => logout()}>Sign Out</Signinbutton>
+    !isAuthenticated && (
+      <Signinbutton onClick={() => loginWithRedirect()}>Sign In</Signinbutton>
     )
   );
 };
-export default LogoutButton;
+export default LoginButton;
 
 const Signinbutton = styled.button`
   display: block;
@@ -21,7 +21,7 @@ const Signinbutton = styled.button`
   border: none;
   font-size: 2rem;
   &:hover {
-    color: yellow;
+    color: #cb6ce6;
   }
   &:active {
     scale: 0.9;

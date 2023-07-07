@@ -2,25 +2,101 @@ import { styled, keyframes } from "styled-components";
 import Header from "../Checklist/Header";
 import Calendar from "react-calendar";
 import { useEffect, useState } from "react";
+import { Icon } from "react-icons-kit";
+import { trashO } from "react-icons-kit/fa/trashO";
+import { plus } from "react-icons-kit/fa/plus";
+import { edit } from "react-icons-kit/fa/edit";
+import { useAuth0 } from "@auth0/auth0-react";
 
 const CheckList = () => {
+  const { user } = useAuth0();
   const [value, onChange] = useState("2017-01-01");
-  const [task, setTask] = useState();
-  useEffect(() => {
+  const [task, setTask] = useState({});
+  const [newTask, setNewTask] = useState("");
+
+  console.log(user);
+  const Refresh = () => {
     fetch(`/tasklist/${value.toString().slice(0, 15)}/user_id`)
       .then((response) => response.json())
       .then((parsed) => {
         if (parsed.status === 404) {
           throw new Error(parsed.message);
         }
-
         setTask(parsed.data.task);
       })
       .catch((error) => {
         setTask([]);
         console.log("Error fetching data:", error);
       });
+  };
+
+  useEffect(() => {
+    Refresh();
   }, [value]);
+
+  const handleDelete = (index) => {
+    fetch(`/deletetask/${value.toString().slice(0, 15)}/user_id/${index}`, {
+      method: "DELETE",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    })
+      .then((response) => response.json())
+      .then((parsed) => {
+        console.log(parsed);
+        Refresh();
+      })
+
+      .catch((error) => console.log(error));
+  };
+
+  const handleUpdate = (input, index) => {
+    setTask({});
+    fetch("/updatetask", {
+      method: "PATCH",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        date: value.toString().slice(0, 15),
+        user: "user_id",
+        input: input,
+        index: index,
+      }),
+    })
+      .then((response) => response.json())
+      .then((parsed) => {
+        console.log(parsed);
+        Refresh();
+      })
+
+      .catch((error) => console.log(error));
+  };
+  const handleSubmit = (input, index) => {
+    setTask({});
+    fetch("/addtask", {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        date: value.toString().slice(0, 15),
+        user: "user_id",
+        input: input,
+        index: index,
+      }),
+    })
+      .then((response) => response.json())
+      .then((parsed) => {
+        console.log(parsed);
+        Refresh();
+      })
+
+      .catch((error) => console.log(error));
+  };
 
   return (
     <Main>
@@ -30,19 +106,55 @@ const CheckList = () => {
           <Calendar onChange={onChange} value={value} />
         </CalendarContainer>
 
-        <List>
+        <ListContainer>
           <ListHeader>
-            <TitleDate>
-              <Date> {value.toString().slice(0, 15)} </Date>
-            </TitleDate>
+            <Date> {value.toString().slice(0, 15)} </Date>
             <Share>Share</Share>
           </ListHeader>
-          <ListTasks>
-            <CheckBox></CheckBox>
-            <Taskline>HELLLO</Taskline>
-            <AddTask>Add Task</AddTask>
-          </ListTasks>
-        </List>
+          <List>
+            <AddTask>
+              <Input
+                onChange={(event) => {
+                  setNewTask(event.target.value);
+                }}
+                value={newTask}
+              />
+              <AddButton
+                onClick={() =>
+                  handleSubmit(newTask, Object.values(task).length)
+                }
+              >
+                <Icon icon={plus} size={50} />
+              </AddButton>
+            </AddTask>
+            {Object.keys(task).map((key, index) => {
+              return (
+                <Tasklines>
+                  <Edit onClick={() => handleUpdate(task[key], key)}>
+                    {" "}
+                    <Icon icon={edit} size={50} />
+                  </Edit>
+
+                  <TaskInput
+                    onChange={(event) => {
+                      setTask({ ...task, [key]: event.target.value });
+                    }}
+                    // value={task[index]}
+                    placeholder={task[key]}
+                  />
+
+                  <Delete
+                    onClick={() => {
+                      handleDelete(key);
+                    }}
+                  >
+                    <Icon icon={trashO} size={50} />
+                  </Delete>
+                </Tasklines>
+              );
+            })}
+          </List>
+        </ListContainer>
 
         <GradientBox></GradientBox>
       </Body>
@@ -58,6 +170,7 @@ const Main = styled.div`
 `;
 
 const Body = styled.div`
+  background-image: url("./images/stickynote.png");
   height: 100%;
   width: 100%;
   display: flex;
@@ -79,7 +192,7 @@ const gradientAnimation = keyframes`
 const GradientBox = styled.div`
   position: absolute;
   width: 100%;
-  height: 45%;
+  height: 70%;
   bottom: 0;
   background-image: linear-gradient(-30deg, #00c4cc, #ff66c4);
   background-size: 200%;
@@ -89,20 +202,20 @@ const GradientBox = styled.div`
 `;
 
 const CalendarContainer = styled.div`
-  max-width: 30%;
+  max-width: 25%;
   height: fit-content;
-  margin: 7%;
+  margin: 5%;
   background-color: #00c4cc;
   color: white;
   border-radius: 0.5rem;
-  font-size: 1rem;
+  font-size: 1.5rem;
 
   .react-calendar__navigation {
     display: flex;
   }
   .react-calendar__navigation__label {
     font-weight: bold;
-    font-size: 1rem;
+    font-size: 1.5rem;
   }
   .react-calendar__navigation__arrow {
     flex-grow: 0.333;
@@ -113,7 +226,7 @@ const CalendarContainer = styled.div`
   }
 
   button {
-    font-size: 1rem;
+    font-size: 1.5rem;
     background-color: transparent;
     border: 0;
     border-radius: 3px;
@@ -136,59 +249,108 @@ const CalendarContainer = styled.div`
   }
 `;
 
-const List = styled.div`
-  background-image: url("/Sticky-Note.png");
-  z-inex: 1;
-  width: 70%;
+const ListContainer = styled.div`
+  z-inex: 2;
+  width: 50%;
   height: 100%;
-  margin: 2rem;
+  margin: 5%;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  gap: 2rem;
+  border-radius: 0.5rem;
 `;
 const ListHeader = styled.div`
+  color: white;
+  border-radius: 0.5rem;
   display: flex;
-  height: 15%;
+  font-size: 2rem;
+  height: 5%;
+  width: 50%;
   align-items: center;
-  justify-content: space-between;
-  margin: 2rem;
-  border: 0.5rem solid blue;
-`;
-const TitleDate = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-left: 2rem;
-`;
-const Title = styled.div`
+  justify-content: space-around;
   padding: 1rem;
-`;
-const Date = styled.div`
-  padding: 1rem;
-`;
-const Share = styled.button`
-  margin: 1rem;
-`;
-const ListTasks = styled.div`
-  display: flex;
-  height: 85%;
-  margin: 2rem;
-  border: 0.5rem solid blue;
-  position: relative;
+  margin: 5%;
+  background-color: #cb6ce6;
 `;
 
-const CheckBox = styled.div`
-  position: absolute;
-  margin: 1rem;
-  height: 2rem;
-  width: 2rem;
-  background-color: #eee;
+const Date = styled.div``;
+const Share = styled.button`
+  font-size: 2rem;
+  color: white;
+  border-radius: 0.5rem;
+  background-color: transparent;
+  border: none;
+  padding: 1rem;
+
   &:hover {
-    background-color: yellow;
+    background-color: #cb6ce6;
+  }
+
+  &:active {
+    background-color: pink;
   }
 `;
-const Taskline = styled.div``;
+const List = styled.div`
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 60%;
+`;
+const AddTask = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+const Input = styled.input`
+  width: 70%;
+  padding: 1%;
+  font-size: 2rem;
+  border-radius: 0.5rem;
+  border: none;
+  // box-shadow: 0 0.1rem 0.2rem 0 #808080, 0 0.1rem 0.2rem #808080;
+  background-color: #00c4cc;
+`;
+const AddButton = styled.button`
+  background-color: transparent;
+  border: none;
+  width: 5%;
+  &:hover {
+    color: green;
+  }
+`;
 
-const AddTask = styled.div``;
+const Tasklines = styled.ul`
+  width: 100%;
+  height: 5%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  list-style: none;
+`;
+const TaskInput = styled.input`
+  width: 70%;
+  padding: 1%;
+  font-weight: bold;
+  font-size: 2rem;
+  border-radius: 0.5rem;
+  border: none;
+  background-color: #00c4cc;
+  margin: 1.5%;
+`;
+const Delete = styled.button`
+  background-color: transparent;
+  border: none;
+  width: 5%;
+  &:hover {
+    color: red;
+  }
+`;
+
+const Edit = styled.div`
+  margin: 0.1rem;
+  width: 5%;
+  &:hover {
+    color: green;
+  }
+`;

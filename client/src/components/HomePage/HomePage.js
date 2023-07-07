@@ -1,25 +1,27 @@
 import { styled, keyframes } from "styled-components";
-import Header from "../Header/Header";
+import Header from "./Header";
 import { useAuth0 } from "@auth0/auth0-react";
 import { useEffect } from "react";
+import StartNow from "./StartNow";
 
 const HomePage = () => {
   const { user } = useAuth0();
-  // useEffect(() => {
-  //   fetch("/addUser", {
-  //     method: "POST",
-  //     headers: {
-  //       Accept: "application/json",
-  //       "Content-Type": "application/json",
-  //     },
-  //     body: JSON.stringify(user),
-  //   })
-  //     .then((response) => response.json())
-  //     .then((parsed) => {
-  //       console.log(parsed);
-  //     })
-  //     .catch((error) => console.log(error));
-  // });
+
+  useEffect(() => {
+    fetch("/addUser", {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(user),
+    })
+      .then((response) => response.json())
+      .then((parsed) => {
+        console.log(parsed);
+      })
+      .catch((error) => console.log(error));
+  });
 
   return (
     <Main>
@@ -27,8 +29,18 @@ const HomePage = () => {
         <Header />
         <HeroSection>
           <TextBox>
-            Some text another text lorem ipsum
-            <StartButton>Start now</StartButton>
+            <p>
+              "Organizing is what you do when you do not know what you are
+              doing." - George W. Bush
+            </p>
+            <div>
+              Our tools provide simple yet effective solutions such as a
+              checklist with dates and workflow boards, enabling you to
+              visualize work items and track their statuses. By utilizing these
+              tools, you can easily identify areas that require your attention
+              and ensure smoother project management.
+            </div>
+            <StartNow />
           </TextBox>
           <ImageOne src={"images/sticky-imageone.png"} alt="Sticky notes" />
           <ImageTwo src={"images/kanban-homepage.png"} alt="Kanban board" />
@@ -40,10 +52,12 @@ const HomePage = () => {
 };
 
 export default HomePage;
+
 const Main = styled.div`
   width: 100vw;
   height: 100vh;
   margin: 0;
+  padding: 0;
   position: relative;
 `;
 
@@ -60,10 +74,9 @@ const gradientAnimation = keyframes`
 `;
 const GradientBox = styled.div`
   background-image: linear-gradient(40deg, #00c4cc, #ff66c4, #ffa53b);
-  background-size: 200%;
+  background-size: 200% 200%;
   animation: ${gradientAnimation} 5s linear infinite;
   transform: skew(1 rad);
-
   position: absolute;
   width: 100%;
   height: 100%;
@@ -73,26 +86,24 @@ const GradientBox = styled.div`
 
 const HeroSection = styled.div`
   display: flex;
-  flex: 3 1 1;
-  margin-top: 5%;
-  margin-left: 10%;
-  height: 100%;
+  justify-content: space-between;
   align-items: center;
+  height: 80vh;
+  margin: 1%;
 `;
 const TextBox = styled.div`
-  flex: 2;
-  border: 1rem blue;
+  align-self: flex-end;
   color: black;
-  font-size: 5rem;
-  grid-area: tx;
+  font-size: 2rem;
   opacity: 0.5;
+  width: 30%;
+  margin: 5%;
 `;
 const StartButton = styled.button`
   display: block;
-  margin-right: 2rem;
   opacity: 1;
   color: blue;
-  padding: 1rem;
+  padding: 2rem;
   background-color: transparent;
   border: none;
   font-size: 1.75rem;
@@ -105,12 +116,12 @@ const StartButton = styled.button`
 `;
 const ImageOne = styled.img`
   z-index: 1;
-  width: 40rem;
-  align-self: stretch;
+  width: 35%;
+  align-self: flex-start;
 `;
 
 const ImageTwo = styled.img`
   z-index: 1;
-  width: 35rem;
-  align-self: stretch;
+  width: 30%;
+  align-self: flex-end;
 `;

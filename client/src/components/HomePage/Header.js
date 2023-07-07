@@ -17,7 +17,13 @@ const Header = () => {
         >
           Manage Your Tasks
         </Tasks>
-        <Projects>Manage Your Projects</Projects>
+        <Projects
+          onClick={() => {
+            navigate("/projects");
+          }}
+        >
+          Manage Your Projects
+        </Projects>
       </TaskProject>
       <LoginButton />
       <LogoutButton />
@@ -29,39 +35,31 @@ export default Header;
 
 const HeaderMain = styled.div`
   display: grid;
-  grid-template-columns: 20% 1fr 10% 10%;
+  grid-template-columns: 20% 60% 10% 10%;
   align-items: center;
   justify-items: center;
-  align-content: space-between;
-  height: 15vh;
+  height: 15%;
   opacity: 1;
-  width: 100vw;
+  width: 100%;
 `;
 const Logo = styled.div`
   color: white;
-
   opacity: 1;
   font-size: 8rem;
-  margin-top: 2rem;
+  margin-top: 1%;
 `;
 
 const TaskProject = styled.div`
   display: flex;
-  flex-direction: row;
-  align-items: flex-start;
-  width: 35rem;
-  gap: 1rem;
-  margin-right: 50rem;
+  gap: 2%;
 `;
 
 const Projects = styled.button`
   color: white;
-
   opacity: 1;
   border: none;
   font-size: 2rem;
   background-color: transparent;
-
   &:hover {
     color: yellow;
   }
@@ -82,8 +80,5 @@ const Tasks = styled.button`
   }
   &:active {
     scale: 0.9;
-  }
-  &:visited {
-    ${(props) => props.textColor || "white"};
   }
 `;

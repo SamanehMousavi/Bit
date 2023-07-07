@@ -16,7 +16,7 @@ const Signinbutton = styled.button`
   display: block;
   margin-right: 2rem;
   opacity: 1;
-  color: #00c4cc;
+  color: white;
   background-color: transparent;
   border: none;
   font-size: 2rem;

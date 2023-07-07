@@ -3,12 +3,13 @@ const {
   gettasklists,
 } = require("../handlers/TaskListHandlers/CheckListHandlers1");
 const { addUser } = require("../handlers/TaskListHandlers/AddUser");
-const { addList } = require("../handlers/TaskListHandlers/addList");
+const { addTask } = require("../handlers/TaskListHandlers/addTask");
+const { updateTask } = require("../handlers/TaskListHandlers/updateTask");
+const { deleteTask } = require("../handlers/TaskListHandlers/deleteTask");
 router.get("/tasklist/:date/:user", gettasklists);
 router.post("/adduser", addUser);
-router.post("/addlist", addList);
-// router.post("/checklists/addlist", addlist);
-// router.post("/checklists/addtask", addtask);
-// router.post("/");
+router.post("/addtask", addTask);
+router.patch("/updatetask", updateTask);
+router.delete("/deletetask/:date/:user/:index", deleteTask);
 
 module.exports = router;

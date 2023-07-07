@@ -2,6 +2,7 @@ import { Routes, BrowserRouter, Route } from "react-router-dom";
 import { styled } from "styled-components";
 import HomePage from "./components/HomePage/HomePage";
 import CheckList from "./components/Checklist/CheckList";
+import Projects from "./components/ProjectManagerTool/Projects";
 
 function App() {
   return (
@@ -11,7 +12,7 @@ function App() {
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/checklist" element={<CheckList />} />
-            <Route />
+            <Route path="/projects" element={<Projects />} />
             <Route />
           </Routes>
         </Main>

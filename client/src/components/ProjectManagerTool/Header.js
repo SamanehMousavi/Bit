@@ -23,13 +23,7 @@ const Header = () => {
         >
           Manage Your Tasks
         </Tasks>
-        <Projects
-          onClick={() => {
-            navigate("/projects");
-          }}
-        >
-          Manage Your Projects
-        </Projects>
+        <Projects>Manage Your Projects</Projects>
       </TaskProject>
       <LoginButton />
       <LogoutButton />
