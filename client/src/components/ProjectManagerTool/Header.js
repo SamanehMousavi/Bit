@@ -39,9 +39,9 @@ const HeaderMain = styled.div`
   align-items: center;
   justify-items: center;
   align-content: space-between;
-  height: 15vh;
+  height: 15%;
   opacity: 1;
-  width: 100vw;
+  width: 100%;
 `;
 const Logo = styled.div`
   color: #00c4cc;

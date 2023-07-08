@@ -20,11 +20,15 @@ const addUser = async (request, response) => {
     const db = client.db("FinalProject");
 
     const listData = await db.collection("Users").findOne({ _id: user.email });
-
+    console.log(listData);
     if (!listData) {
-      await db
-        .collection("Users")
-        .insertOne({ _id: user.email, username: user.name, email: user.email });
+      await db.collection("Users").insertOne({
+        _id: user.email,
+        username: user.name,
+        email: user.email,
+        lists: {},
+        Projects: [],
+      });
       return response.status(200).json({ status: 200, message: "New User" });
     } else {
       return response

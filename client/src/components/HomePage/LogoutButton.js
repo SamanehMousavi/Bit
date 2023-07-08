@@ -6,7 +6,14 @@ const LogoutButton = () => {
 
   return (
     isAuthenticated && (
-      <Signinbutton onClick={() => logout()}>Sign Out</Signinbutton>
+      <Signinbutton
+        onClick={() => {
+          window.localStorage.clear();
+          logout();
+        }}
+      >
+        Sign Out
+      </Signinbutton>
     )
   );
 };

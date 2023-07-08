@@ -1,27 +1,33 @@
 import { styled, keyframes } from "styled-components";
 import Header from "./Header";
 import { useAuth0 } from "@auth0/auth0-react";
-import { useEffect } from "react";
+import { useContext, useEffect } from "react";
 import StartNow from "./StartNow";
+import { UserContext } from "../../UserContext";
 
 const HomePage = () => {
   const { user } = useAuth0();
+  const { currentUser, setCurrentUser } = useContext(UserContext);
 
   useEffect(() => {
-    fetch("/addUser", {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(user),
-    })
-      .then((response) => response.json())
-      .then((parsed) => {
-        console.log(parsed);
+    if (user) {
+      fetch("/addUser", {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(user),
       })
-      .catch((error) => console.log(error));
-  });
+        .then((response) => response.json())
+        .then((parsed) => {
+          console.log(parsed);
+          window.localStorage.setItem("user", JSON.stringify(user));
+          setCurrentUser(user);
+        })
+        .catch((error) => console.log(error));
+    }
+  }, [user]);
 
   return (
     <Main>
@@ -29,12 +35,13 @@ const HomePage = () => {
         <Header />
         <HeroSection>
           <TextBox>
-            <p>
-              "Organizing is what you do when you do not know what you are
-              doing." - George W. Bush
-            </p>
             <div>
-              Our tools provide simple yet effective solutions such as a
+              &nbsp;"Being organized is being in control, and being in control
+              gives you confidence."
+            </div>
+            &nbsp;
+            <div>
+              &nbsp; Our tools provide simple yet effective solutions such as a
               checklist with dates and workflow boards, enabling you to
               visualize work items and track their statuses. By utilizing these
               tools, you can easily identify areas that require your attention

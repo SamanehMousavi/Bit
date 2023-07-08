@@ -1,5 +1,5 @@
 "use strict";
-
+const { uuid } = require("uuidv4");
 const { MongoClient } = require("mongodb");
 
 require("dotenv").config();
@@ -12,8 +12,8 @@ const options = {
 
 const addTask = async (request, response) => {
   const client = new MongoClient(MONGO_URI, options);
-  const { date, user, input, index } = request.body;
-
+  const { date, user, input } = request.body;
+  const index = uuid();
   try {
     await client.connect();
     const db = client.db("FinalProject");
@@ -21,7 +21,14 @@ const addTask = async (request, response) => {
     const findUser = await db.collection("Users").findOne({ _id: user });
     // console.log(findUser);
     const newList = { ...findUser.lists };
-    newList[date].task[index] = input;
+    if (Object.keys(newList).includes(date)) {
+      newList[date].task[index] = input;
+    } else {
+      newList[date] = {
+        shareWith: [],
+        task: { [index]: input },
+      };
+    }
     // console.log(newList[date].task);
 
     // if (!listData) {

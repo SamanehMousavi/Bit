@@ -3,28 +3,32 @@ import { useNavigate } from "react-router-dom";
 import { styled } from "styled-components";
 import LoginButton from "./LoginButton";
 import LogoutButton from "./LogoutButton";
+import { useAuth0 } from "@auth0/auth0-react";
 
 const Header = () => {
   const navigate = useNavigate();
+  const { user } = useAuth0();
   return (
     <HeaderMain>
       <Logo>Bit</Logo>
-      <TaskProject>
-        <Tasks
-          onClick={() => {
-            navigate("/checklist");
-          }}
-        >
-          Manage Your Tasks
-        </Tasks>
-        <Projects
-          onClick={() => {
-            navigate("/projects");
-          }}
-        >
-          Manage Your Projects
-        </Projects>
-      </TaskProject>
+      {user && (
+        <TaskProject>
+          <Tasks
+            onClick={() => {
+              navigate("/checklist");
+            }}
+          >
+            Manage Your Tasks
+          </Tasks>
+          <Projects
+            onClick={() => {
+              navigate("/projects");
+            }}
+          >
+            Manage Your Projects
+          </Projects>
+        </TaskProject>
+      )}
       <LoginButton />
       <LogoutButton />
     </HeaderMain>

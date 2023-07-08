@@ -1,7 +1,5 @@
 const router = require("express").Router();
-const {
-  gettasklists,
-} = require("../handlers/TaskListHandlers/CheckListHandlers1");
+const { gettasklists } = require("../handlers/TaskListHandlers/getTaskLists");
 const { addUser } = require("../handlers/TaskListHandlers/AddUser");
 const { addTask } = require("../handlers/TaskListHandlers/addTask");
 const { updateTask } = require("../handlers/TaskListHandlers/updateTask");

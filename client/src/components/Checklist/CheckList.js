@@ -6,17 +6,18 @@ import { Icon } from "react-icons-kit";
 import { trashO } from "react-icons-kit/fa/trashO";
 import { plus } from "react-icons-kit/fa/plus";
 import { edit } from "react-icons-kit/fa/edit";
-import { useAuth0 } from "@auth0/auth0-react";
+
+import { UserContext } from "../../UserContext";
+import { useContext } from "react";
 
 const CheckList = () => {
-  const { user } = useAuth0();
-  const [value, onChange] = useState("2017-01-01");
+  const { currentUser, setCurrentUser } = useContext(UserContext);
+  const [value, onChange] = useState(new window.Date());
   const [task, setTask] = useState({});
   const [newTask, setNewTask] = useState("");
 
-  console.log(user);
   const Refresh = () => {
-    fetch(`/tasklist/${value.toString().slice(0, 15)}/user_id`)
+    fetch(`/tasklist/${value.toString().slice(0, 15)}/${currentUser.email}`)
       .then((response) => response.json())
       .then((parsed) => {
         if (parsed.status === 404) {
@@ -31,17 +32,24 @@ const CheckList = () => {
   };
 
   useEffect(() => {
-    Refresh();
-  }, [value]);
+    if (currentUser) {
+      Refresh();
+    }
+  }, [value, currentUser]);
 
   const handleDelete = (index) => {
-    fetch(`/deletetask/${value.toString().slice(0, 15)}/user_id/${index}`, {
-      method: "DELETE",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-    })
+    fetch(
+      `/deletetask/${value.toString().slice(0, 15)}/${
+        currentUser.email
+      }/${index}`,
+      {
+        method: "DELETE",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+      }
+    )
       .then((response) => response.json())
       .then((parsed) => {
         console.log(parsed);
@@ -61,7 +69,7 @@ const CheckList = () => {
       },
       body: JSON.stringify({
         date: value.toString().slice(0, 15),
-        user: "user_id",
+        user: currentUser.email,
         input: input,
         index: index,
       }),
@@ -75,27 +83,29 @@ const CheckList = () => {
       .catch((error) => console.log(error));
   };
   const handleSubmit = (input, index) => {
-    setTask({});
-    fetch("/addtask", {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        date: value.toString().slice(0, 15),
-        user: "user_id",
-        input: input,
-        index: index,
-      }),
-    })
-      .then((response) => response.json())
-      .then((parsed) => {
-        console.log(parsed);
-        Refresh();
+    if (input.length > 0) {
+      fetch("/addtask", {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          date: value.toString().slice(0, 15),
+          user: currentUser.email,
+          input: input,
+          index: index,
+        }),
       })
+        .then((response) => response.json())
+        .then((parsed) => {
+          console.log(parsed);
+          setNewTask("");
+          Refresh();
+        })
 
-      .catch((error) => console.log(error));
+        .catch((error) => console.log(error));
+    }
   };
 
   return (
