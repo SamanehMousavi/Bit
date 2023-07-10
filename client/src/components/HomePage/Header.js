@@ -39,9 +39,9 @@ export default Header;
 
 const HeaderMain = styled.div`
   display: grid;
-  grid-template-columns: 20% 60% 10% 10%;
+  grid-template-columns: 20% 60% 20%;
   align-items: center;
-  justify-items: center;
+  justify-items: end;
   height: 15%;
   opacity: 1;
   width: 100%;
@@ -55,7 +55,6 @@ const Logo = styled.div`
 
 const TaskProject = styled.div`
   display: flex;
-  gap: 2%;
 `;
 
 const Projects = styled.button`

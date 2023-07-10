@@ -55,37 +55,35 @@
       description:"Painting Smith's House",
       members:["user1", "user2", "user3"],
       status:'done',
-      task:{
-        workQueue:{
-          id:task1,
-          id:task2,
-          id:task3,
-        }
-        inProgress:{
-          id:task1,
-          id:task2,
-          id:task3,}
-        review:{
-          id:task1,
-          id:task2,
-          id:task3,
-        }
-        done:{
-          id:task1,
-          id:task2,
-          id:task3,
-        }
+      tasks:[
+          {id:"1",content:"First Task"},
+          {id:"2",content:"Second Task"},
+          {id:"3",content:"Third Task"},
+          {id:"4", content:"Fourth Task"}]
+    taskStatus:{
+
+  workqueue:{
+    name: "workqueue",
+    items: tasks
+    },
+  toDo: {
+    name: "To do",
+    items: []
+  },
+          inProgress: {
+    name: "In Progress",
+    items: []
+  },
+        done: {
+    name: "Done",
+    items: []
+  }
       }
 
  } ]
-
-
-
-
-
-
-
   }
+
+
 
 
 

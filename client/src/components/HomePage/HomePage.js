@@ -31,9 +31,10 @@ const HomePage = () => {
 
   return (
     <Main>
-      <div>
+      <Body>
         <Header />
         <HeroSection>
+          <ImageOne src={"images/sticky-imageone.png"} alt="Sticky notes" />
           <TextBox>
             <div>
               &nbsp;"Being organized is being in control, and being in control
@@ -49,11 +50,11 @@ const HomePage = () => {
             </div>
             <StartNow />
           </TextBox>
-          <ImageOne src={"images/sticky-imageone.png"} alt="Sticky notes" />
+
           <ImageTwo src={"images/kanban-homepage.png"} alt="Kanban board" />
         </HeroSection>
         <GradientBox></GradientBox>
-      </div>
+      </Body>
     </Main>
   );
 };
@@ -67,6 +68,9 @@ const Main = styled.div`
   padding: 0;
   position: relative;
 `;
+const Body = styled.div`
+width:100%
+height:100%;`;
 
 const gradientAnimation = keyframes`
 0% {

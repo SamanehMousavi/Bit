@@ -13,15 +13,49 @@ const batchImport = async () => {
     await client.connect();
     const db = client.db("FinalProject");
     const result = await db.collection("Users").insertOne({
-      _id: "user_id",
-      username: "user_name",
-      email: "user_email",
+      _id: "sama.mousavi@gmail.com",
+      username: "Samaneh Mousavi",
+      email: "sama.mousavi@gmail.com",
+
       lists: {
-        "04/07/2023": {
+        "Fri Jul 07 2023": {
           shareWith: ["user1", "user2", "user3"],
-          task: [{ id: 1, description: "task_description", completed: false }],
+          task: [{ "001236": "washing dishes" }],
         },
       },
+      Projects: [
+        {
+          _id: "123498",
+          title: "Painting",
+          dueDate: "Friday december 2nd",
+          description: "Painting Smith's House",
+          members: ["user1", "user2", "user3"],
+          status: "done",
+          taskStatus: {
+            workqueue: {
+              name: "workqueue",
+              items: [
+                { id: "1", content: "First Task" },
+                { id: "2", content: "Second Task" },
+                { id: "3", content: "Third Task" },
+                { id: "4", content: "Fourth Task" },
+              ],
+            },
+            toDo: {
+              name: "To do",
+              items: [],
+            },
+            inProgress: {
+              name: "In Progress",
+              items: [],
+            },
+            done: {
+              name: "Done",
+              items: [],
+            },
+          },
+        },
+      ],
     });
     console.log({
       result: `${result.insertedCount} documents inserted `,
