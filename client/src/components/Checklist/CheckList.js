@@ -180,12 +180,11 @@ const Main = styled.div`
 `;
 
 const Body = styled.div`
-  background-image: url("./images/stickynote.png");
   height: 100%;
   width: 100%;
   display: flex;
   position: relative;
-  align-items: center;
+  // align-items: center;
 `;
 
 const gradientAnimation = keyframes`
@@ -202,10 +201,10 @@ const gradientAnimation = keyframes`
 const GradientBox = styled.div`
   position: absolute;
   width: 100%;
-  height: 70%;
+  height: 85%;
   bottom: 0;
-  background-image: linear-gradient(-30deg, #00c4cc, #ff66c4);
-  background-size: 200%;
+  background-image: linear-gradient(-30deg, #00c4cc, #ff66c4, pink);
+  background-size: 200% 200%;
   animation: ${gradientAnimation} 10s linear infinite;
   transform: skewY(-10deg);
   z-index: -2;
@@ -258,19 +257,34 @@ const CalendarContainer = styled.div`
     color: #dfdfdf;
   }
 `;
+const listContainerFadeIn = keyframes`
+  from {
+    opacity: 0;
+    transform: translateY(50%);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+
+    
+  }
+`;
 
 const ListContainer = styled.div`
+  background-image: url("./images/stickyn.png");
+  background-size: contain;
+  background-repeat: no-repeat;
   z-inex: 2;
-  width: 50%;
+  width: 70%;
   height: 100%;
-  margin: 5%;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  border-radius: 0.5rem;
+  gap: 5%;
+  align-items: flex-start;
+  animation: ${listContainerFadeIn} 2s ease-in-out;
 `;
 const ListHeader = styled.div`
-  color: white;
+  color: black;
   border-radius: 0.5rem;
   display: flex;
   font-size: 2rem;
@@ -279,14 +293,16 @@ const ListHeader = styled.div`
   align-items: center;
   justify-content: space-around;
   padding: 1rem;
-  margin: 5%;
-  background-color: #cb6ce6;
+  gap: 5%;
+  margin-top: 10%;
+  margin-left: 5%;
+  // background-color: #cb6ce6;
 `;
 
 const Date = styled.div``;
 const Share = styled.button`
   font-size: 2rem;
-  color: white;
+  color: black;
   border-radius: 0.5rem;
   background-color: transparent;
   border: none;
@@ -303,8 +319,10 @@ const Share = styled.button`
 const List = styled.div`
   display: flex;
   flex-direction: column;
+  gap: 5%;
   height: 100%;
   width: 60%;
+  margin-left: 5%;
 `;
 const AddTask = styled.div`
   width: 100%;
@@ -313,20 +331,25 @@ const AddTask = styled.div`
   align-items: center;
 `;
 const Input = styled.input`
-  width: 70%;
+  color: #cb6ce6;
+  font-weight: bold;
+  width: 80%;
   padding: 1%;
   font-size: 2rem;
   border-radius: 0.5rem;
   border: none;
-  // box-shadow: 0 0.1rem 0.2rem 0 #808080, 0 0.1rem 0.2rem #808080;
-  background-color: #00c4cc;
+  box-shadow: 0 0.1rem 0.2rem 0 #808080, 0 0.1rem 0.2rem #808080;
+  background-color: transparent;
 `;
 const AddButton = styled.button`
   background-color: transparent;
   border: none;
   width: 5%;
   &:hover {
-    color: green;
+    color: #cb6ce6;
+  }
+  &:active {
+    scale: 0.9;
   }
 `;
 
@@ -336,16 +359,19 @@ const Tasklines = styled.ul`
   display: flex;
   flex-direction: row;
   align-items: center;
+  justify-content: center;
   list-style: none;
 `;
 const TaskInput = styled.input`
+  color: #cb6ce6;
   width: 70%;
   padding: 1%;
   font-weight: bold;
   font-size: 2rem;
   border-radius: 0.5rem;
   border: none;
-  background-color: #00c4cc;
+  box-shadow: 0 0.1rem 0.2rem 0 #808080, 0 0.1rem 0.2rem #808080;
+  background-color: transparent;
   margin: 1.5%;
 `;
 const Delete = styled.button`

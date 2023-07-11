@@ -64,13 +64,12 @@ export default HomePage;
 const Main = styled.div`
   width: 100vw;
   height: 100vh;
-  margin: 0;
-  padding: 0;
   position: relative;
 `;
 const Body = styled.div`
-width:100%
-height:100%;`;
+  width: 100%;
+  height: 100%;
+`;
 
 const gradientAnimation = keyframes`
 0% {
@@ -102,6 +101,43 @@ const HeroSection = styled.div`
   height: 80vh;
   margin: 1%;
 `;
+
+const imageOneFadeIn = keyframes`
+  from {
+    opacity: 0;
+    transform: translateX(50%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+`;
+
+const imageTwoFadeIn = keyframes`
+  from {
+    opacity: 0;
+    transform: translateX(-50%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  
+`;
+
+const ImageOne = styled.img`
+  z-index: 1;
+  width: 35%;
+  align-self: flex-start;
+  animation: ${imageOneFadeIn} 1s ease-in-out;
+`;
+
+const ImageTwo = styled.img`
+  z-index: 1;
+  width: 30%;
+  align-self: flex-end;
+  animation: ${imageTwoFadeIn} 1s ease-in-out;
+`;
 const TextBox = styled.div`
   align-self: flex-end;
   color: black;
@@ -109,30 +145,4 @@ const TextBox = styled.div`
   opacity: 0.5;
   width: 30%;
   margin: 5%;
-`;
-const StartButton = styled.button`
-  display: block;
-  opacity: 1;
-  color: blue;
-  padding: 2rem;
-  background-color: transparent;
-  border: none;
-  font-size: 1.75rem;
-  &:hover {
-    color: purple;
-  }
-  &:active {
-    scale: 0.9;
-  }
-`;
-const ImageOne = styled.img`
-  z-index: 1;
-  width: 35%;
-  align-self: flex-start;
-`;
-
-const ImageTwo = styled.img`
-  z-index: 1;
-  width: 30%;
-  align-self: flex-end;
 `;

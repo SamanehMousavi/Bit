@@ -39,7 +39,7 @@ export default Header;
 
 const HeaderMain = styled.div`
   display: grid;
-  grid-template-columns: 20% 60% 20%;
+  grid-template-columns: 10% 60% 20%;
   align-items: center;
   justify-items: end;
   height: 15%;
@@ -55,6 +55,7 @@ const Logo = styled.div`
 
 const TaskProject = styled.div`
   display: flex;
+  gap: 10%;
 `;
 
 const Projects = styled.button`
@@ -72,7 +73,6 @@ const Projects = styled.button`
 `;
 const Tasks = styled.button`
   color: white;
-
   opacity: 1;
   border: none;
   font-size: 2rem;

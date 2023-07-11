@@ -10,10 +10,10 @@ const options = {
   useUnifiedTopology: true,
 };
 
-const deleteTask = async (request, response) => {
+const deleteProject = async (request, response) => {
   const client = new MongoClient(MONGO_URI, options);
-  const { date, user, index } = request.params;
-
+  const { user, projectId } = request.params;
+  console.log(user);
   try {
     await client.connect();
     const db = client.db("FinalProject");
@@ -24,15 +24,16 @@ const deleteTask = async (request, response) => {
         .status(404)
         .json({ status: 404, message: "User not found" });
     }
+    const newProjects = { ...findUser.Projects };
 
-    const newList = { ...findUser.lists };
+    delete newProjects[projectId];
 
-    delete newList[date].task[index];
-    // if (!listData) {
     await db
       .collection("Users")
-      .updateOne({ _id: user }, { $set: { lists: newList } });
-    return response.status(200).json({ status: 200, message: "deleted List" });
+      .updateOne({ _id: user }, { $set: { Projects: newProjects } });
+    return response
+      .status(200)
+      .json({ status: 200, message: "deleted Project" });
   } catch (error) {
     response.status(500).json({ status: 500, message: error.message });
   } finally {
@@ -40,4 +41,4 @@ const deleteTask = async (request, response) => {
   }
 };
 
-module.exports = { deleteTask };
+module.exports = { deleteProject };

@@ -1,8 +1,9 @@
 import { styled, keyframes } from "styled-components";
 import Header from "../Checklist/Header";
 import { useEffect, useState } from "react";
-import { useAuth0 } from "@auth0/auth0-react";
 import { useNavigate } from "react-router-dom";
+import { UserContext } from "../../UserContext";
+import { useContext } from "react";
 import {
   Table,
   TableBody,
@@ -14,22 +15,48 @@ import {
 } from "@material-ui/core";
 
 const Projects = ({ boardId, projectId }) => {
-  const { user } = useAuth0();
-
+  const { currentUser, setCurrentUser } = useContext(UserContext);
+  const navigate = useNavigate();
   const [projects, setProjects] = useState({});
+  const Refresh = () => {
+    fetch(`/getprojects/${currentUser.email}`)
+      .then((response) => response.json())
+      .then((parsed) => {
+        if (parsed.status === 404) {
+          throw new Error(parsed.message);
+        }
+
+        setProjects(parsed.data);
+      })
+      .catch((error) => {
+        setProjects([]);
+        console.log("Error fetching data:", error);
+      });
+  };
 
   useEffect(() => {
-    if (user) {
-      fetch(`/getProjects/${user.email}`)
-        .then((response) => response.json())
-        .then((parsed) => {
-          setProjects(parsed.data);
-        });
+    if (currentUser) {
+      Refresh();
     }
-  }, [user]);
+  }, [currentUser]);
 
-  const navigate = useNavigate();
-  console.log(projects);
+  const handleDelete = (index) => {
+    fetch(`/deleteProject/${currentUser.email}/${index}`, {
+      method: "DELETE",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    })
+      .then((response) => response.json())
+      .then((parsed) => {
+        console.log(parsed);
+        Refresh();
+      })
+
+      .catch((error) => console.log(error));
+  };
+
   return (
     <Main>
       <Header />
@@ -52,18 +79,28 @@ const Projects = ({ boardId, projectId }) => {
               </TableHead>
               <TableBody>
                 {Object.values(projects).map((project, index) => {
+                  if (!project) {
+                    return null;
+                  }
+
                   const Difference_In_Time =
                     new Date(project.dueDate).getTime() - new Date().getTime();
                   const Difference_In_Days = Math.floor(
                     Difference_In_Time / (1000 * 3600 * 24)
                   );
+
                   return (
-                    <TableRow
-                      onClick={() => {
-                        navigate(`/projectdetails/${projectId}`);
-                      }}
-                    >
-                      <ProjectRow align="center">{project.title}</ProjectRow>
+                    <TableRow>
+                      <ProjectRow align="center">
+                        <a
+                          onClick={() => {
+                            navigate(`/projectdetails/${project._id}`);
+                          }}
+                          style={{ textDecoration: "underline" }}
+                        >
+                          {project.title}
+                        </a>
+                      </ProjectRow>
                       <ProjectRow align="center">{project.dueDate}</ProjectRow>
                       <ProjectRow align="center">
                         {project.description}
@@ -75,8 +112,7 @@ const Projects = ({ boardId, projectId }) => {
                       <ProjectRow align="center">
                         <Delete
                           onClick={() => {
-                            projects.splice(index, 1);
-                            setProjects([...projects]);
+                            handleDelete(project._id);
                           }}
                         >
                           Delete
@@ -88,16 +124,15 @@ const Projects = ({ boardId, projectId }) => {
               </TableBody>
             </Table>
           </TableContainer>
-        </ProjectsOverview>
-        <AddProject>
           <CreateProject
             onClick={() => {
-              navigate(`/createboard/${boardId}`);
+              navigate(`/createboard`);
             }}
           >
             Add New Project
           </CreateProject>
-        </AddProject>
+        </ProjectsOverview>
+
         <GradientBox></GradientBox>
       </Body>
     </Main>
@@ -114,12 +149,11 @@ const Main = styled.div`
 
 const Body = styled.div`
   display: flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  width:100%
-  height:100%;
-
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
 `;
 const gradientAnimation = keyframes`
 0% {
@@ -135,26 +169,21 @@ const gradientAnimation = keyframes`
 const GradientBox = styled.div`
   position: absolute;
   width: 100%;
-  height: 70%;
+  height: 85%;
   bottom: 0;
-  background-image: linear-gradient(-30deg, #c1ff72, #ffde59);
-  background-size: 200%;
+  background-image: linear-gradient(-30deg, orange, #ffde59, #c1ff72);
+  background-size: 200% 200%;
   animation: ${gradientAnimation} 10s linear infinite;
   transform: skewY(-10deg);
   z-index: -2;
 `;
-const AddProject = styled.div`
-  color: white;
-  border-radius: 0.5rem;
-`;
 
 const CreateProject = styled.button`
   font-size: 1.5rem;
-  color: white;
   border-radius: 0.5rem;
-  background-color: orange;
+  background-color: #00c4cc;
   border: none;
-  padding: 10%;
+  padding: 2%;
 
   &:hover {
     background-color: yellow;
@@ -163,29 +192,41 @@ const CreateProject = styled.button`
 
   &:active {
     background-color: yellow;
+    scale: 0.9;
+  }
+  margin: 2%;
+`;
+const overviewFadeIn = keyframes`
+  from {
+    opacity: 0;
+    transform: translateX(50%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+
+    
   }
 `;
+
 const ProjectsOverview = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-
-  margin: 5%;
-
-  color: orange;
+  margin: 2%;
+  color: black;
   font-size: 2rem;
+  animation: ${overviewFadeIn} 1s ease-in-out;
 `;
-
 const Text = styled.div`
   margin: 5%;
-  font-weight: bold;
 `;
 const TableHeader = styled(TableCell)`
   && {
     font-size: 1.5rem;
-    color: green;
-    border: 0.5rem solid orange;
-    background-color: yellow;
+    color: black;
+    border: 0.25rem solid #a6a6a6;
+    background-color: #00c4cc;
     width: 15%;
   }
 `;
@@ -198,15 +239,17 @@ const ProjectRow = styled(TableCell)`
   && {
     font-size: 1.5rem;
     color: black;
-    background-color: white;
-    border: 0.5rem solid green;
+    background-color: #ffeda6;
+    // background-color: none;
+    // z-index: -2;
+    border: 0.25rem solid #a6a6a6;
   }
 `;
 const Delete = styled.button`
   font-size: 1.5rem;
-  color: white;
+  color: black;
   border-radius: 0.5rem;
-  background-color: orange;
+  background-color: #00c4cc;
   border: none;
   padding: 10%;
 
@@ -217,5 +260,6 @@ const Delete = styled.button`
 
   &:active {
     background-color: yellow;
+    scale: 0.9;
   }
 `;

@@ -3,20 +3,13 @@ import Header from "../Checklist/Header";
 import { useEffect, useState } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 import { useParams } from "react-router-dom";
-
+import { useNavigate } from "react-router-dom";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
-const tasks = [
-  { id: "1", content: "First task" },
-  { id: "2", content: "Second task" },
-  { id: "3", content: "Third task" },
-  { id: "4", content: "Fourth task" },
-  { id: "5", content: "Fifth task" },
-];
 
 const taskStatus = {
   requested: {
     name: "Requested",
-    items: tasks,
+    items: [],
   },
   toDo: {
     name: "To do",
@@ -31,6 +24,7 @@ const taskStatus = {
     items: [],
   },
 };
+
 const onDragEnd = (result, columns, setColumns) => {
   if (!result.destination) return;
   const { source, destination } = result;
@@ -67,14 +61,29 @@ const onDragEnd = (result, columns, setColumns) => {
     });
   }
 };
+
 const ProjectDetails = () => {
+  const { user } = useAuth0();
   const [columns, setColumns] = useState(taskStatus);
   const [formData, setFormData] = useState({});
+  const [addTask, setAddTask] = useState({});
+  const navigate = useNavigate();
+  const { projectId } = useParams();
 
-  const handleSelect = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.id]: e.target.value,
+  useEffect(() => {
+    if (user) {
+      fetch(`/getProject/${user.email}/${projectId}`)
+        .then((response) => response.json())
+        .then((parsed) => {
+          setFormData(parsed.data);
+          setColumns(parsed.data.taskStatus);
+        });
+    }
+  }, [user]);
+  const addTaskhandleChange = (event) => {
+    setAddTask({
+      ...addTask,
+      [event.target.id]: event.target.value,
     });
   };
 
@@ -84,38 +93,50 @@ const ProjectDetails = () => {
       [e.target.id]: e.target.value,
     });
   };
-  const { user } = useAuth0();
-  // useEffect(() => {
-  //   fetch("/")
-  //     .then((response) => {
-  //       const { tasks, taskStatus } = response.data;
-  //       setColumns(taskStatus);
-  //     })
-  //     .catch((error) => {
-  //       console.error("Error fetching data:", error);
-  //     });
-  // }, []);
-  const handleSubmit = (e) => {
-    //   e.preventDefault();
-    //   fetch("/orders", {
-    //     method: "POST",
-    //     headers: {
-    //       Accept: "application/json",
-    //       "Content-Type": "application/json",
-    //     },
-    //     body: JSON.stringify({ order: formData }),
-    //   })
-    //     .then((res) => res.json())
-    //     .then((parsed) => {
-    //       if (parsed.status === 200) {
-    //         console.log(parsed.data);
-    //         navigate(`/confirm/${parsed.data.id}`);
-    //       } else {
-    //         alert(parsed.error);
-    //       }
-    //     });
+
+  const handleAddTask = (id) => {
+    const name = columns[id].name;
+    const newArray = [...columns[id].items];
+    newArray.push({ id: newArray.length + 1, content: addTask[id] });
+    setColumns({ ...columns, [id]: { name: name, items: newArray } });
+    setAddTask({});
   };
 
+  const handleDelete = (columnId, index) => {
+    const name = columns[columnId].name;
+    const newArray = [...columns[columnId].items];
+
+    newArray.splice(index, 1);
+    setColumns({ ...columns, [columnId]: { name: name, items: newArray } });
+    setAddTask({});
+  };
+  const handleSubmit = (e) => {
+    fetch("/updateProject", {
+      method: "PATCH",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        projectId: projectId,
+        title: formData.title,
+        description: formData.description,
+        dueDate: formData.dueDate,
+        taskStatus: columns,
+        user: user.email,
+        status: formData.status,
+      }),
+    })
+      .then((res) => res.json())
+      .then((parsed) => {
+        if (parsed.status === 200) {
+          console.log(parsed.data);
+          navigate("/projects");
+        } else {
+          alert(parsed.error);
+        }
+      });
+  };
   return (
     <Main>
       <div>
@@ -125,24 +146,62 @@ const ProjectDetails = () => {
             <FormContainer>
               <Form onSubmit={handleSubmit}>
                 <label>Project Title</label>
-                <input id="" name="" type="text" onChange={handleChange} />
+                <FormInput
+                  id="title"
+                  name="projectTitle"
+                  type="text"
+                  onChange={handleChange}
+                  value={formData.title}
+                />
                 <label>Members Names</label>
-                <input id="" name="" type="text" onChange={handleChange} />
-                <label>Project Due Date</label>
-                <input id="" name="" type="text" onChange={handleChange} />
+                <FormInput
+                  id="membersName"
+                  name="membersName"
+                  type="text"
+                  onChange={handleChange}
+                />
+
                 <label>Project Description</label>
-                <input id="" name="" type="text" onChange={handleChange} />
+                <FormInput
+                  id="description"
+                  name="projectDescription"
+                  type="text"
+                  onChange={handleChange}
+                  value={formData.description}
+                />
                 <label>Project Status</label>
-                <select id="" name="" type="text" onChange={handleSelect}>
+                <select
+                  id="status"
+                  name="projectStatus"
+                  type="text"
+                  onChange={handleChange}
+                  style={{
+                    padding: "2%",
+                    fontSize: "1.5rem",
+                    borderRadius: "0.5rem",
+                    border: "none",
+                    boxShadow:
+                      "0 0.1rem 0.2rem 0 #808080, 0 0.1rem 0.2rem #808080",
+                  }}
+                >
                   <option value="">In Progress</option>
                   <option value="">Done </option>
                 </select>
-                <SaveLink type="submit">Save</SaveLink>
+                <label for="start">Project Due Date</label>
+                <FormInput
+                  type="date"
+                  id="dueDate"
+                  name="start"
+                  value={formData.dueDate}
+                  onChange={handleChange}
+                />
               </Form>
             </FormContainer>
+            <SaveLink type="submit" onClick={handleSubmit}>
+              Update
+            </SaveLink>
           </SideBar>
           <div>
-            <h1 style={{ textAlign: "center" }}>Jira Board</h1>
             <div
               style={{
                 display: "flex",
@@ -153,73 +212,71 @@ const ProjectDetails = () => {
               <DragDropContext
                 onDragEnd={(result) => onDragEnd(result, columns, setColumns)}
               >
-                {Object.entries(columns).map(([columnId, column], index) => {
-                  return (
-                    <div
-                      style={{
-                        display: "flex",
-                        flexDirection: "column",
-                        alignItems: "center",
-                      }}
-                      key={columnId}
-                    >
-                      <h2>{column.name}</h2>
-                      <div style={{ margin: 8 }} key={columnId}>
-                        <Droppable droppableId={columnId}>
-                          {(provided, snapshot) => (
-                            <div
-                              {...provided.droppableProps}
-                              ref={provided.innerRef}
-                              style={{
-                                background: snapshot.isDraggingOver
-                                  ? "lightblue"
-                                  : "lightgrey",
-                                padding: 4,
-                                width: 250,
-                                minHeight: 500,
-                              }}
+                {Object.entries(columns).map(([columnId, column], index) => (
+                  <div
+                    key={columnId}
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      width: "300px",
+                    }}
+                  >
+                    <BoardHeader>{column.name}</BoardHeader>
+
+                    <Droppable droppableId={columnId}>
+                      {(provided) => (
+                        <ItemList
+                          ref={provided.innerRef}
+                          {...provided.droppableProps}
+                        >
+                          {column.items.map((item, index) => (
+                            <Draggable
+                              key={item.id}
+                              draggableId={item.id.toString()}
+                              index={index}
                             >
-                              {column.items.map((item, index) => (
-                                <Draggable
-                                  key={item.id}
-                                  draggableId={item.id}
-                                  index={index}
+                              {(provided) => (
+                                <Item
+                                  ref={provided.innerRef}
+                                  {...provided.draggableProps}
+                                  {...provided.dragHandleProps}
                                 >
-                                  {(provided, snapshot) => (
-                                    <div
-                                      ref={provided.innerRef}
-                                      {...provided.draggableProps}
-                                      {...provided.dragHandleProps}
-                                      style={{
-                                        userSelect: "none",
-                                        padding: 16,
-                                        margin: "0 0 8px 0",
-                                        minHeight: "50px",
-                                        backgroundColor: snapshot.isDragging
-                                          ? "#263B4A"
-                                          : "#456C86",
-                                        color: "white",
-                                        ...provided.draggableProps.style,
-                                      }}
-                                    >
-                                      {item.content}
-                                    </div>
-                                  )}
-                                </Draggable>
-                              ))}
-                              {provided.placeholder}
-                            </div>
-                          )}
-                        </Droppable>
-                      </div>
-                    </div>
-                  );
-                })}
+                                  {item.content}
+                                  <Delete
+                                    onClick={() =>
+                                      handleDelete(columnId, index)
+                                    }
+                                  >
+                                    delete
+                                  </Delete>
+                                </Item>
+                              )}
+                            </Draggable>
+                          ))}
+                          <NewTaskContainer>
+                            <NewTaskInput
+                              type="text"
+                              id={columnId}
+                              value={addTask[columnId]}
+                              onChange={addTaskhandleChange}
+                            />
+                            <NewTask onClick={() => handleAddTask(columnId)}>
+                              {" "}
+                              New Task{" "}
+                            </NewTask>
+                          </NewTaskContainer>
+                          {provided.placeholder}
+                        </ItemList>
+                      )}
+                    </Droppable>
+                  </div>
+                ))}
               </DragDropContext>
             </div>
           </div>
         </Body>
       </div>
+      <GradientBox></GradientBox>
     </Main>
   );
 };
@@ -235,70 +292,83 @@ const Body = styled.div`
   width: 100%;
   height: 100%;
   display: flex;
-  justify-content: space-around;
+  gap: 10%;
   align-items: center;
+  margin: 5%;
 `;
+const gradientAnimation = keyframes`
+0% {
+  background-position: 0% 50%;
+}
+50% {
+  background-position: 100% 50%;
+}
+100% {
+  background-position: 0% 50%;
+}
+`;
+const GradientBox = styled.div`
+  background-image: linear-gradient(40deg, #00c4cc, #ff66c4, #ffa53b);
+  background-size: 200% 200%;
+  animation: ${gradientAnimation} 5s linear infinite;
+  transform: skewY(-10deg);
+  position: absolute;
+  width: 100%;
+  height: 70%;
+  z-index: -1;
+  bottom: 0;
+`;
+const FormFadeIn = keyframes`
+  from {
+    opacity: 0;
+    transform: translateY(50%);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }`;
 const SideBar = styled.div`
-  width: 25%;
+  width: 30%;
   border-radius: 0.5rem;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: space-around;
-  height: 100vh;
-`;
-
-const SideBarContent = styled.div`
-  border: 0.5rem solid orange;
-  padding: 1rem;
-  color: black;
-  width: 45%;
-  margin: 10%;
-`;
-const Container = styled(DragDropContext)``;
-
-const ItemList = styled.div`
-  background-color: white;
-  padding: 8px;
-  width: 250px;
-  min-height: 500px;
-  background-color: pink;
-`;
-
-const Item = styled.div`
-  user-select: none;
-  padding: 16px;
-  margin-bottom: 8px;
-  min-height: 50px;
-  background-color: #456c86;
-  color: purple;
+  justify-content: center;
+  animation: ${FormFadeIn} 1s ease-in-out;
 `;
 
 const FormContainer = styled.div`
   display: flex;
-  background-color: #20cd8d;
+  background-color: #86c5d8;
   border: none;
   flex-direction: column;
   align-items: center;
-  padding: 10%;
+  padding: 7%;
   border-radius: 0.5rem;
 `;
 const Form = styled.form`
   display: grid;
-  grid-template-columns: 1fr 200px;
+  grid-template-columns: 1fr 2fr;
   align-items: center;
   font-size: 1.5rem;
   gap: 2rem;
-  padding: 10%;
-  color: white;
+  color: black;
   width: 100%;
+  padding: 2%;
+`;
+const FormInput = styled.input`
+  padding: 2%;
+  font-size: 1.5rem;
+  border-radius: 0.5rem;
+  border: none;
+  box-shadow: 0 0.1rem 0.2rem 0 #808080, 0 0.1rem 0.2rem #808080;
 `;
 
 const SaveLink = styled.button`
-  font-size: 20px;
-  padding: 10px;
-  margin-bottom: 10px;
-  background-color: #cb6ce6;
+  font-size: 1.5rem;
+  padding: 2% 10%;
+  margin: 5%;
+  background-color: #20cd8d;
   border: none;
   border-radius: 0.5rem;
   &:hover {
@@ -307,16 +377,93 @@ const SaveLink = styled.button`
   }
 
   &:active {
-    background-color: yellow;
+    scale: 0.9;
   }
 `;
-// return (
-//     <>
-//       {!menu ? (
-//         <p>Loading...</p>
-//       ) : (
+const BoradFadeIn = keyframes`
+  from {
+    opacity: 0;
+    transform: translateY(50%);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  
+`;
 
-//       )}
-//     </>
-//   );
-// };
+const BoardHeader = styled.div`
+  font-size: 1.5rem;
+  padding: 2%;
+  font-weight: bold;
+  text-align: center;
+`;
+const ItemList = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  min-height: 35rem;
+  background-color: #86c5d8;
+  border-radius: 0.5rem;
+  box-shadow: 0 0.1rem 0.2rem 0 #808080, 0 0.1rem 0.2rem #808080;
+  animation: ${BoradFadeIn} 1s ease-in-out;
+`;
+
+const Item = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 2rem;
+  padding: 5%;
+  background-color: #ffe6f5;
+  color: black;
+  border: none;
+  margin: 2%;
+  border-radius: 0.5rem;
+`;
+
+const Delete = styled.button`
+  font-size: 1.5rem;
+  padding: 2%;
+  height: 100%;
+  background-color: #20cd8d;
+  color: black;
+  border: none;
+  border-radius: 0.5rem;
+  &:hover {
+    background-color: yellow;
+    color: black;
+  }
+  &:active {
+    scale: 0.9;
+  }
+`;
+const NewTaskContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  height: 15%;
+  margin: 2%;
+  border-radius: 0.5rem;
+`;
+const NewTask = styled.button`
+  font-size: 1.5rem;
+  padding: 2%;
+  height: 100%;
+  background-color: #20cd8d;
+  color: black;
+  border: none;
+  &:hover {
+    background-color: yellow;
+    color: black;
+  }
+  border-radius: 0.5rem;
+`;
+const NewTaskInput = styled.input`
+  font-size: 1.5rem;
+  padding: 1.5%;
+  height: 100%;
+  border-radius: 0.5rem;
+  box-shadow: 0 0.1rem 0.2rem 0 #808080, 0 0.1rem 0.2rem #808080;
+  border: none;
+`;
