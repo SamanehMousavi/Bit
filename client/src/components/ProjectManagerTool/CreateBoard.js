@@ -102,7 +102,6 @@ const CreateBoard = () => {
     setColumns({ ...columns, [id]: { name: name, items: newArray } });
     setAddTask({});
   };
-  console.log(formData);
   const handleDelete = (columnId, index) => {
     const name = columns[columnId].name;
     const newArray = [...columns[columnId].items];

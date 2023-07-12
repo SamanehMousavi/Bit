@@ -82,7 +82,6 @@ const ProjectDetails = () => {
       fetch("/getUser")
         .then((response) => response.json())
         .then((parsed) => {
-          console.log(parsed.data);
           setUserList(parsed.data);
         });
     }

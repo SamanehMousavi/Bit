@@ -14,9 +14,7 @@ const gettasklists = async (request, response) => {
   const { date, user } = request.params;
 
   const client = new MongoClient(MONGO_URI, options);
-  console.log(user);
 
-  console.log(date);
   try {
     await client.connect();
     const db = client.db("FinalProject");

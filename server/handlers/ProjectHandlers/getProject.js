@@ -21,7 +21,6 @@ const getProject = async (request, response) => {
 
     const projectData = await db.collection("Users").findOne({ _id: user });
 
-    console.log(projectData);
     response
       .status(200)
       .json({ status: 200, data: projectData.Projects[projectId] });

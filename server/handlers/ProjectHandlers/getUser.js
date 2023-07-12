@@ -18,9 +18,9 @@ const getUser = async (request, response) => {
     const db = client.db("FinalProject");
 
     const projectData = await db.collection("Users").find().toArray();
-    console.log(projectData);
+
     const userList = projectData.map((event) => event._id);
-    console.log(userList);
+
     response.status(200).json({ status: 200, data: userList });
   } catch (error) {
     (error) => console.log(error);

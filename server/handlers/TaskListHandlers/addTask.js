@@ -19,7 +19,7 @@ const addTask = async (request, response) => {
     const db = client.db("FinalProject");
 
     const findUser = await db.collection("Users").findOne({ _id: user });
-    // console.log(findUser);
+
     const newList = { ...findUser.lists };
     if (Object.keys(newList).includes(date)) {
       newList[date].task[index] = { id: index, task: input, completed: false };
@@ -29,9 +29,7 @@ const addTask = async (request, response) => {
         task: { [index]: { id: index, task: input, completed: false } },
       };
     }
-    // console.log(newList[date].task);
 
-    // if (!listData) {
     await db
       .collection("Users")
       .updateOne({ _id: user }, { $set: { lists: newList } });

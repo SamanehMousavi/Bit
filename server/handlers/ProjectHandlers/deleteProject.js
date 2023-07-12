@@ -13,7 +13,7 @@ const options = {
 const deleteProject = async (request, response) => {
   const client = new MongoClient(MONGO_URI, options);
   const { user, projectId } = request.params;
-  console.log(user);
+
   try {
     await client.connect();
     const db = client.db("FinalProject");

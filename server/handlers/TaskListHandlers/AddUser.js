@@ -20,7 +20,7 @@ const addUser = async (request, response) => {
     const db = client.db("FinalProject");
 
     const listData = await db.collection("Users").findOne({ _id: user.email });
-    console.log(listData);
+
     if (!listData) {
       await db.collection("Users").insertOne({
         _id: user.email,

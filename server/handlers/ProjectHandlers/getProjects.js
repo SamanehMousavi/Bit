@@ -21,19 +21,16 @@ const getProjects = async (request, response) => {
 
     // const projectData = await db.collection("Users").findOne({ _id: user });
     const newProjectList = {};
-    console.log(user);
+
     const userList = await db.collection("Users").find().toArray();
-    console.log(userList);
+
     const newProjects = userList.forEach((e) => {
       Object.keys(e.Projects).forEach((key) => {
-        console.log(e.Projects[key], "inside");
-
         if (e._id === user || e.Projects[key].member === user) {
           newProjectList[key] = { ...e.Projects[key] };
         }
       });
     });
-    console.log(newProjectList);
 
     response.status(200).json({ status: 200, data: newProjectList });
   } catch (error) {

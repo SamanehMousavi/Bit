@@ -28,7 +28,7 @@ const updateProject = async (request, response) => {
     const db = client.db("FinalProject");
 
     const findUser = await db.collection("Users").findOne({ _id: user });
-    // console.log(findUser);
+
     const newProject = { ...findUser.Projects };
     newProject[projectId] = {
       _id: projectId,

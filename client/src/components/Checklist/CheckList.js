@@ -61,7 +61,6 @@ const CheckList = () => {
   };
 
   const handleUpdate = (input, index) => {
-    console.log(input);
     setTask({});
     fetch("/updatetask", {
       method: "PATCH",
@@ -139,7 +138,7 @@ const CheckList = () => {
         .catch((error) => console.log(error));
     }
   };
-  console.log(task);
+
 
   return (
     <Main>
