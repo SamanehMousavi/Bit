@@ -1,4 +1,5 @@
 require("dotenv").config();
+const { uuid } = require("uuidv4");
 const { MONGO_URI } = process.env;
 const options = {
   useNewUrlParser: true,
@@ -9,9 +10,12 @@ const { MongoClient } = require("mongodb");
 
 const batchImport = async () => {
   const client = new MongoClient(MONGO_URI, options);
+  const index = uuid();
   try {
     await client.connect();
     const db = client.db("FinalProject");
+    const newTask = {};
+    newTask[index] = { id: index, task: "washing dishes", completed: "false" };
     const result = await db.collection("Users").insertOne({
       _id: "sama.mousavi@gmail.com",
       username: "Samaneh Mousavi",
@@ -20,7 +24,7 @@ const batchImport = async () => {
       lists: {
         "Fri Jul 07 2023": {
           shareWith: ["user1", "user2", "user3"],
-          task: [{ "001236": "washing dishes" }],
+          task: newTask,
         },
       },
       Projects: [

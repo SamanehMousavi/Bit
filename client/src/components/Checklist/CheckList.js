@@ -1,4 +1,4 @@
-import { styled, keyframes } from "styled-components";
+import { styled, keyframes, css } from "styled-components";
 import Header from "../Checklist/Header";
 import Calendar from "react-calendar";
 import { useEffect, useState } from "react";
@@ -6,7 +6,7 @@ import { Icon } from "react-icons-kit";
 import { trashO } from "react-icons-kit/fa/trashO";
 import { plus } from "react-icons-kit/fa/plus";
 import { edit } from "react-icons-kit/fa/edit";
-
+import { check } from "react-icons-kit/fa/check";
 import { UserContext } from "../../UserContext";
 import { useContext } from "react";
 
@@ -15,6 +15,7 @@ const CheckList = () => {
   const [value, onChange] = useState(new window.Date());
   const [task, setTask] = useState({});
   const [newTask, setNewTask] = useState("");
+  const [checked, setChecked] = useState({});
 
   const Refresh = () => {
     fetch(`/tasklist/${value.toString().slice(0, 15)}/${currentUser.email}`)
@@ -60,6 +61,7 @@ const CheckList = () => {
   };
 
   const handleUpdate = (input, index) => {
+    console.log(input);
     setTask({});
     fetch("/updatetask", {
       method: "PATCH",
@@ -72,6 +74,7 @@ const CheckList = () => {
         user: currentUser.email,
         input: input,
         index: index,
+        completed: task[index].completed,
       }),
     })
       .then((response) => response.json())
@@ -82,6 +85,35 @@ const CheckList = () => {
 
       .catch((error) => console.log(error));
   };
+
+  const applyLineThrough = (key) => {
+    // setTask({
+    //   ...task,
+    //   [key]: { id: key, task: task[key].task, completed: !task[key].completed },
+    // });
+    fetch("/updatetask", {
+      method: "PATCH",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        date: value.toString().slice(0, 15),
+        user: currentUser.email,
+        input: task[key].task,
+        index: key,
+        completed: !task[key].completed,
+      }),
+    })
+      .then((response) => response.json())
+      .then((parsed) => {
+        console.log(parsed);
+        Refresh();
+      })
+
+      .catch((error) => console.log(error));
+  };
+
   const handleSubmit = (input, index) => {
     if (input.length > 0) {
       fetch("/addtask", {
@@ -107,6 +139,7 @@ const CheckList = () => {
         .catch((error) => console.log(error));
     }
   };
+  console.log(task);
 
   return (
     <Main>
@@ -119,7 +152,6 @@ const CheckList = () => {
         <ListContainer>
           <ListHeader>
             <Date> {value.toString().slice(0, 15)} </Date>
-            <Share>Share</Share>
           </ListHeader>
           <List>
             <AddTask>
@@ -139,25 +171,38 @@ const CheckList = () => {
             </AddTask>
             {Object.keys(task).map((key, index) => {
               return (
-                <Tasklines>
-                  <Edit onClick={() => handleUpdate(task[key], key)}>
-                    {" "}
+                <Tasklines key={key}>
+                  <Edit onClick={(event) => handleUpdate(task[key].task, key)}>
                     <Icon icon={edit} size={50} />
                   </Edit>
 
+                  {/* {typeof task[key] === "string" ? ( */}
                   <TaskInput
                     onChange={(event) => {
-                      setTask({ ...task, [key]: event.target.value });
+                      setTask({
+                        ...task,
+                        [key]: {
+                          id: key,
+                          task: event.target.value,
+                          completed: task[key].completed,
+                        },
+                      });
                     }}
-                    // value={task[index]}
-                    placeholder={task[key]}
+                    value={task[key].task || ""}
+                    style={{
+                      textDecoration:
+                        task && task[key].completed ? "line-through" : "none",
+                    }}
                   />
+                  {/* ) : (
+                    task[key]
+                  )} */}
 
-                  <Delete
-                    onClick={() => {
-                      handleDelete(key);
-                    }}
-                  >
+                  <CheckMark onClick={() => applyLineThrough(key)}>
+                    <Icon icon={check} size={50} />
+                  </CheckMark>
+
+                  <Delete onClick={() => handleDelete(key)}>
                     <Icon icon={trashO} size={50} />
                   </Delete>
                 </Tasklines>
@@ -296,26 +341,10 @@ const ListHeader = styled.div`
   gap: 5%;
   margin-top: 10%;
   margin-left: 5%;
-  // background-color: #cb6ce6;
 `;
 
 const Date = styled.div``;
-const Share = styled.button`
-  font-size: 2rem;
-  color: black;
-  border-radius: 0.5rem;
-  background-color: transparent;
-  border: none;
-  padding: 1rem;
 
-  &:hover {
-    background-color: #cb6ce6;
-  }
-
-  &:active {
-    background-color: pink;
-  }
-`;
 const List = styled.div`
   display: flex;
   flex-direction: column;
@@ -358,8 +387,8 @@ const Tasklines = styled.ul`
   height: 5%;
   display: flex;
   flex-direction: row;
-  align-items: center;
-  justify-content: center;
+  align-items: flex-start;
+  justify-content: space-between;
   list-style: none;
 `;
 const TaskInput = styled.input`
@@ -380,6 +409,7 @@ const Delete = styled.button`
   width: 5%;
   &:hover {
     color: red;
+    cursor: pointer;
   }
 `;
 
@@ -388,5 +418,7 @@ const Edit = styled.div`
   width: 5%;
   &:hover {
     color: green;
+    cursor: pointer;
   }
 `;
+const CheckMark = styled.div``;

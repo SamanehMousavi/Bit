@@ -27,7 +27,7 @@ const addUser = async (request, response) => {
         username: user.name,
         email: user.email,
         lists: {},
-        Projects: [],
+        Projects: {},
       });
       return response.status(200).json({ status: 200, message: "New User" });
     } else {

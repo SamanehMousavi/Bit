@@ -22,11 +22,11 @@ const addTask = async (request, response) => {
     // console.log(findUser);
     const newList = { ...findUser.lists };
     if (Object.keys(newList).includes(date)) {
-      newList[date].task[index] = input;
+      newList[date].task[index] = { id: index, task: input, completed: false };
     } else {
       newList[date] = {
         shareWith: [],
-        task: { [index]: input },
+        task: { [index]: { id: index, task: input, completed: false } },
       };
     }
     // console.log(newList[date].task);

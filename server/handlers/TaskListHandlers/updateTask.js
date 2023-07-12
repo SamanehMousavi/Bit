@@ -12,7 +12,8 @@ const options = {
 
 const updateTask = async (request, response) => {
   const client = new MongoClient(MONGO_URI, options);
-  const { date, user, input, index } = request.body;
+  const { date, user, input, index, completed } = request.body;
+  console.log(input);
 
   try {
     await client.connect();
@@ -21,7 +22,11 @@ const updateTask = async (request, response) => {
     const findUser = await db.collection("Users").findOne({ _id: user });
     // console.log(findUser);
     const newList = { ...findUser.lists };
-    newList[date].task[index] = input;
+    newList[date].task[index] = {
+      id: index,
+      task: input,
+      completed: completed,
+    };
     // console.log(newList[date].task);
 
     // if (!listData) {

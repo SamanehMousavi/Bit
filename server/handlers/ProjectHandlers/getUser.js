@@ -10,21 +10,18 @@ const options = {
   useUnifiedTopology: true,
 };
 
-const getProject = async (request, response) => {
-  const { user, projectId } = request.params;
-
+const getUser = async (request, response) => {
   const client = new MongoClient(MONGO_URI, options);
 
   try {
     await client.connect();
     const db = client.db("FinalProject");
 
-    const projectData = await db.collection("Users").findOne({ _id: user });
-
+    const projectData = await db.collection("Users").find().toArray();
     console.log(projectData);
-    response
-      .status(200)
-      .json({ status: 200, data: projectData.Projects[projectId] });
+    const userList = projectData.map((event) => event._id);
+    console.log(userList);
+    response.status(200).json({ status: 200, data: userList });
   } catch (error) {
     (error) => console.log(error);
     response.status(500).json({ status: 500, message: error.message });
@@ -33,4 +30,4 @@ const getProject = async (request, response) => {
   }
 };
 
-module.exports = { getProject };
+module.exports = { getUser };

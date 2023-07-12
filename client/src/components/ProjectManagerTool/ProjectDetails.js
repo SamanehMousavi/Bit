@@ -69,6 +69,7 @@ const ProjectDetails = () => {
   const [addTask, setAddTask] = useState({});
   const navigate = useNavigate();
   const { projectId } = useParams();
+  const [userList, setUserList] = useState([]);
 
   useEffect(() => {
     if (user) {
@@ -77,6 +78,12 @@ const ProjectDetails = () => {
         .then((parsed) => {
           setFormData(parsed.data);
           setColumns(parsed.data.taskStatus);
+        });
+      fetch("/getUser")
+        .then((response) => response.json())
+        .then((parsed) => {
+          console.log(parsed.data);
+          setUserList(parsed.data);
         });
     }
   }, [user]);
@@ -125,6 +132,7 @@ const ProjectDetails = () => {
         taskStatus: columns,
         user: user.email,
         status: formData.status,
+        member: formData.member,
       }),
     })
       .then((res) => res.json())
@@ -137,70 +145,85 @@ const ProjectDetails = () => {
         }
       });
   };
+
   return (
     <Main>
       <div>
         <Header />
         <Body>
-          <SideBar>
-            <FormContainer>
-              <Form onSubmit={handleSubmit}>
-                <label>Project Title</label>
-                <FormInput
-                  id="title"
-                  name="projectTitle"
-                  type="text"
-                  onChange={handleChange}
-                  value={formData.title}
-                />
-                <label>Members Names</label>
-                <FormInput
-                  id="membersName"
-                  name="membersName"
-                  type="text"
-                  onChange={handleChange}
-                />
+          {formData && (
+            <SideBar>
+              <FormContainer>
+                <Form onSubmit={handleSubmit}>
+                  <label>Project Title</label>
+                  <FormInput
+                    id="title"
+                    name="projectTitle"
+                    type="text"
+                    onChange={handleChange}
+                    value={formData.title}
+                  />
+                  <label>Members Names</label>
+                  <select
+                    id="membersName"
+                    name="membersName"
+                    type="text"
+                    onChange={handleChange}
+                    style={{
+                      padding: "2%",
+                      fontSize: "1.5rem",
+                      borderRadius: "0.5rem",
+                      border: "none",
+                      boxShadow:
+                        "0 0.1rem 0.2rem 0 #808080, 0 0.1rem 0.2rem #808080",
+                    }}
+                  >
+                    {userList?.map((member) => {
+                      return <option value={member}>{member}</option>;
+                    })}
+                  </select>
 
-                <label>Project Description</label>
-                <FormInput
-                  id="description"
-                  name="projectDescription"
-                  type="text"
-                  onChange={handleChange}
-                  value={formData.description}
-                />
-                <label>Project Status</label>
-                <select
-                  id="status"
-                  name="projectStatus"
-                  type="text"
-                  onChange={handleChange}
-                  style={{
-                    padding: "2%",
-                    fontSize: "1.5rem",
-                    borderRadius: "0.5rem",
-                    border: "none",
-                    boxShadow:
-                      "0 0.1rem 0.2rem 0 #808080, 0 0.1rem 0.2rem #808080",
-                  }}
-                >
-                  <option value="">In Progress</option>
-                  <option value="">Done </option>
-                </select>
-                <label for="start">Project Due Date</label>
-                <FormInput
-                  type="date"
-                  id="dueDate"
-                  name="start"
-                  value={formData.dueDate}
-                  onChange={handleChange}
-                />
-              </Form>
-            </FormContainer>
-            <SaveLink type="submit" onClick={handleSubmit}>
-              Update
-            </SaveLink>
-          </SideBar>
+                  <label>Project Description</label>
+                  <FormInput
+                    id="description"
+                    name="projectDescription"
+                    type="text"
+                    onChange={handleChange}
+                    value={formData.description}
+                  />
+                  <label>Project Status</label>
+                  <select
+                    id="status"
+                    name="projectStatus"
+                    type="text"
+                    onChange={handleChange}
+                    style={{
+                      padding: "2%",
+                      fontSize: "1.5rem",
+                      borderRadius: "0.5rem",
+                      border: "none",
+                      boxShadow:
+                        "0 0.1rem 0.2rem 0 #808080, 0 0.1rem 0.2rem #808080",
+                    }}
+                  >
+                    <option value="">In Progress</option>
+                    <option value="">Done </option>
+                  </select>
+                  <label for="start">Project Due Date</label>
+                  <FormInput
+                    type="date"
+                    id="dueDate"
+                    name="start"
+                    value={formData.dueDate}
+                    onChange={handleChange}
+                  />
+                </Form>
+              </FormContainer>
+              <SaveLink type="submit" onClick={handleSubmit}>
+                Update
+              </SaveLink>
+            </SideBar>
+          )}
           <div>
             <div
               style={{

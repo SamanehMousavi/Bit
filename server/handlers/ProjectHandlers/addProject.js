@@ -12,7 +12,7 @@ const options = {
 
 const addProject = async (request, response) => {
   const client = new MongoClient(MONGO_URI, options);
-  const { user, title, dueDate, description, taskData } = request.body;
+  const { user, title, dueDate, description, taskData, member } = request.body;
   const index = uuid();
   try {
     await client.connect();
@@ -26,6 +26,7 @@ const addProject = async (request, response) => {
       dueDate: dueDate,
       status: "In Progress",
       description: description,
+      member: member,
       taskStatus: taskData,
     };
 

@@ -1,9 +1,11 @@
 import { styled, keyframes } from "styled-components";
 import Header from "../Checklist/Header";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 import { useNavigate } from "react-router-dom";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
+import { plus } from "react-icons-kit/fa/plus";
+import { Icon } from "react-icons-kit";
 
 const taskStatus = {
   requested: {
@@ -68,6 +70,16 @@ const CreateBoard = () => {
   const [formData, setFormData] = useState({});
   const [addTask, setAddTask] = useState({});
   const navigate = useNavigate();
+  const [userList, setUserList] = useState([]);
+
+  useEffect(() => {
+    fetch("/getUser")
+      .then((response) => response.json())
+      .then((parsed) => {
+        console.log(parsed.data);
+        setUserList(parsed.data);
+      });
+  }, []);
 
   const addTaskhandleChange = (event) => {
     setAddTask({
@@ -83,14 +95,14 @@ const CreateBoard = () => {
     });
   };
 
-  const handleAddTask = (id) => {
+  const handleAddTask = (id, start) => {
     const name = columns[id].name;
     const newArray = [...columns[id].items];
     newArray.push({ id: newArray.length + 1, content: addTask[id] });
     setColumns({ ...columns, [id]: { name: name, items: newArray } });
     setAddTask({});
   };
-
+  console.log(formData);
   const handleDelete = (columnId, index) => {
     const name = columns[columnId].name;
     const newArray = [...columns[columnId].items];
@@ -99,7 +111,9 @@ const CreateBoard = () => {
     setColumns({ ...columns, [columnId]: { name: name, items: newArray } });
     setAddTask({});
   };
+
   const handleSubmit = (e) => {
+    console.log(formData);
     fetch("/addProject", {
       method: "POST",
       headers: {
@@ -112,6 +126,7 @@ const CreateBoard = () => {
         dueDate: formData.start,
         taskData: columns,
         user: user.email,
+        member: formData.member,
       }),
     })
       .then((res) => res.json())
@@ -129,46 +144,61 @@ const CreateBoard = () => {
       <div>
         <Header />
         <Body>
-          <SideBar>
-            <FormContainer>
-              <Form onSubmit={handleSubmit}>
-                <label>Project Title</label>
-                <FormInput
-                  id="projectTitle"
-                  name="projectTitle"
-                  type="text"
-                  onChange={handleChange}
-                />
-                <label>Members Names</label>
-                <FormInput
-                  id="membersName"
-                  name="membersName"
-                  type="text"
-                  onChange={handleChange}
-                />
+          {formData && (
+            <SideBar>
+              <FormContainer>
+                <Form onSubmit={handleSubmit}>
+                  <label>Project Title</label>
+                  <FormInput
+                    id="projectTitle"
+                    name="projectTitle"
+                    type="text"
+                    onChange={handleChange}
+                  />
 
-                <label>Project Description</label>
-                <FormInput
-                  id="projectDescription"
-                  name="projectDescription"
-                  type="text"
-                  onChange={handleChange}
-                />
+                  <label>Members Names</label>
+                  <select
+                    id="member"
+                    name="membersName"
+                    type="text"
+                    onChange={handleChange}
+                    style={{
+                      padding: "2%",
+                      fontSize: "1.5rem",
+                      borderRadius: "0.5rem",
+                      border: "none",
+                      boxShadow:
+                        "0 0.1rem 0.2rem 0 #808080, 0 0.1rem 0.2rem #808080",
+                    }}
+                  >
+                    {userList?.map((member) => {
+                      return <option value={member}>{member}</option>;
+                    })}
+                  </select>
 
-                <label for="start">Project Due Date</label>
-                <FormInput
-                  type="date"
-                  id="start"
-                  name="start"
-                  value={formData.start}
-                  onChange={handleChange}
-                />
-              </Form>
-            </FormContainer>
-            <SaveLink type="submit" onClick={handleSubmit}>
-              Save
-            </SaveLink>
-          </SideBar>
+                  <label>Project Description</label>
+                  <FormInput
+                    id="projectDescription"
+                    name="projectDescription"
+                    type="text"
+                    onChange={handleChange}
+                  />
+
+                  <label for="start">Project Due Date</label>
+                  <FormInput
+                    type="date"
+                    id="start"
+                    name="start"
+                    value={formData.start}
+                    onChange={handleChange}
+                  />
+                </Form>
+              </FormContainer>
+              <SaveLink type="submit" onClick={handleSubmit}>
+                Save
+              </SaveLink>
+            </SideBar>
+          )}
           <div>
             <div
               style={{
@@ -229,11 +259,16 @@ const CreateBoard = () => {
                               onChange={addTaskhandleChange}
                             />
 
-                            <NewTask onClick={() => handleAddTask(columnId)}>
+                            <NewTask
+                              onClick={() =>
+                                handleAddTask(columnId, formData.start)
+                              }
+                            >
                               {" "}
                               New Task{" "}
                             </NewTask>
                           </NewTaskContainer>
+
                           {provided.placeholder}
                         </ItemList>
                       )}
@@ -326,11 +361,21 @@ const Form = styled.form`
   padding: 2%;
 `;
 const FormInput = styled.input`
-  padding: 2%;
+  padding: 3%;
   font-size: 1.5rem;
   border-radius: 0.5rem;
   border: none;
   box-shadow: 0 0.1rem 0.2rem 0 #808080, 0 0.1rem 0.2rem #808080;
+  width: 100%;
+`;
+
+const MemberInput = styled.div`
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  align-items: center;
+  padding: 3%;
+  gap: 5%;
 `;
 
 const SaveLink = styled.button`
@@ -349,7 +394,7 @@ const SaveLink = styled.button`
     scale: 0.9;
   }
 `;
-const BoradFadeIn = keyframes`
+const BoardFadeIn = keyframes`
   from {
     opacity: 0;
     transform: translateY(50%);
@@ -375,7 +420,7 @@ const ItemList = styled.div`
   background-color: #86c5d8;
   border-radius: 0.5rem;
   box-shadow: 0 0.1rem 0.2rem 0 #808080, 0 0.1rem 0.2rem #808080;
-  animation: ${BoradFadeIn} 1s ease-in-out;
+  animation: ${BoardFadeIn} 1s ease-in-out;
 `;
 
 const Item = styled.div`

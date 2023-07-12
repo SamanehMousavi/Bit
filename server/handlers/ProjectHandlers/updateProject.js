@@ -12,8 +12,16 @@ const options = {
 
 const updateProject = async (request, response) => {
   const client = new MongoClient(MONGO_URI, options);
-  const { user, projectId, title, description, status, dueDate, taskStatus } =
-    request.body;
+  const {
+    user,
+    projectId,
+    title,
+    description,
+    status,
+    dueDate,
+    taskStatus,
+    member,
+  } = request.body;
 
   try {
     await client.connect();
@@ -28,6 +36,7 @@ const updateProject = async (request, response) => {
       dueDate: dueDate,
       status: status,
       description: description,
+      member: member,
       taskStatus: taskStatus,
     };
 
