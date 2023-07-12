@@ -8,6 +8,13 @@ import { UserContext } from "../../UserContext";
 const HomePage = () => {
   const { user } = useAuth0();
   const { currentUser, setCurrentUser } = useContext(UserContext);
+  useEffect(() => {
+    document.title = "Bit";
+
+    return () => {
+      document.title = "Bit";
+    };
+  }, []);
 
   useEffect(() => {
     if (user) {

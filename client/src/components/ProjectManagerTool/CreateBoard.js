@@ -163,8 +163,8 @@ const CreateBoard = () => {
                     type="text"
                     onChange={handleChange}
                     style={{
-                      padding: "2%",
-                      fontSize: "1.5rem",
+                      padding: "1.5%",
+                      fontSize: "1rem",
                       borderRadius: "0.5rem",
                       border: "none",
                       boxShadow:
@@ -205,6 +205,7 @@ const CreateBoard = () => {
                 display: "flex",
                 justifyContent: "center",
                 height: "100%",
+                width: "60rem",
               }}
             >
               <DragDropContext
@@ -217,6 +218,7 @@ const CreateBoard = () => {
                       display: "flex",
                       flexDirection: "column",
                       alignItems: "center",
+                      width: "200px",
                     }}
                   >
                     <BoardHeader>{column.name}</BoardHeader>
@@ -332,7 +334,7 @@ const FormFadeIn = keyframes`
     transform: translateY(0);
   }`;
 const SideBar = styled.div`
-  width: 30%;
+  width: 25%;
   border-radius: 0.5rem;
   display: flex;
   flex-direction: column;
@@ -354,32 +356,23 @@ const Form = styled.form`
   display: grid;
   grid-template-columns: 1fr 2fr;
   align-items: center;
-  font-size: 1.5rem;
+  font-size: 1rem;
   gap: 2rem;
   color: black;
   width: 100%;
   padding: 2%;
 `;
 const FormInput = styled.input`
-  padding: 3%;
-  font-size: 1.5rem;
+  padding: 2%;
+  font-size: 1rem;
   border-radius: 0.5rem;
   border: none;
   box-shadow: 0 0.1rem 0.2rem 0 #808080, 0 0.1rem 0.2rem #808080;
   width: 100%;
 `;
 
-const MemberInput = styled.div`
-  display: flex;
-  flex-direction: row;
-  width: 100%;
-  align-items: center;
-  padding: 3%;
-  gap: 5%;
-`;
-
 const SaveLink = styled.button`
-  font-size: 1.5rem;
+  font-size: 1rem;
   padding: 2% 10%;
   margin: 5%;
   background-color: #20cd8d;
@@ -407,9 +400,10 @@ const BoardFadeIn = keyframes`
 `;
 
 const BoardHeader = styled.div`
-  font-size: 1.5rem;
+  font-size: 1.25rem;
   padding: 2%;
   font-weight: bold;
+  text-align: center;
 `;
 const ItemList = styled.div`
   display: flex;
@@ -426,8 +420,8 @@ const ItemList = styled.div`
 const Item = styled.div`
   display: flex;
   align-items: center;
-  font-size: 2rem;
-  gap: 20%;
+  justify-content: space-between;
+  font-size: 1rem;
   padding: 5%;
   background-color: #ffe6f5;
   color: black;
@@ -437,7 +431,7 @@ const Item = styled.div`
 `;
 
 const Delete = styled.button`
-  font-size: 1.5rem;
+  font-size: 1rem;
   padding: 2%;
   height: 100%;
   background-color: #20cd8d;
@@ -460,7 +454,7 @@ const NewTaskContainer = styled.div`
   border-radius: 0.5rem;
 `;
 const NewTask = styled.button`
-  font-size: 1.5rem;
+  font-size: 1rem;
   padding: 2%;
   height: 100%;
   background-color: #20cd8d;
@@ -473,7 +467,7 @@ const NewTask = styled.button`
   border-radius: 0.5rem;
 `;
 const NewTaskInput = styled.input`
-  font-size: 1.5rem;
+  font-size: 1rem;
   padding: 1.5%;
   height: 100%;
   border-radius: 0.5rem;

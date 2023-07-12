@@ -2,10 +2,10 @@ import { createGlobalStyle } from "styled-components";
 
 const GlobalStyle = createGlobalStyle`
 @import url('https://fonts.googleapis.com/css2?family=Playfair:ital,wght@1,300&family=Poppins:wght@300&family=Roboto:wght@300&display=swap');
-main, header, body{
+*{
     
-font-family: 'Playfair', serif;
-font-family: 'Poppins', sans-serif;
+// font-family: 'Playfair', serif;
+// font-family: 'Poppins', sans-serif;
 font-family: 'Roboto', sans-serif;
 font-weight:bold;
 }
@@ -27,7 +27,7 @@ font-weight:bold;
         padding: 0;
         border: 0;
         font-size: 100%;
-        font: inherit;
+        // font: inherit;
         vertical-align: baseline;
     }
 
