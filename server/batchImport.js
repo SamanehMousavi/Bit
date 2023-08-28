@@ -1,5 +1,5 @@
 require("dotenv").config();
-const { uuid } = require("uuidv4");
+const { v4 } = require("uuid");
 const { MONGO_URI } = process.env;
 const options = {
   useNewUrlParser: true,
@@ -10,7 +10,7 @@ const { MongoClient } = require("mongodb");
 
 const batchImport = async () => {
   const client = new MongoClient(MONGO_URI, options);
-  const index = uuid();
+  const index = v4();
   try {
     await client.connect();
     const db = client.db("FinalProject");

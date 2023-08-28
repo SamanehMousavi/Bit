@@ -6,21 +6,20 @@ const LogoutButton = () => {
 
   return (
     isAuthenticated && (
-      <Signinbutton
+      <Logoutbutton
         onClick={() => {
           window.localStorage.clear();
           logout();
         }}
       >
         Sign Out
-      </Signinbutton>
+      </Logoutbutton>
     )
   );
 };
 export default LogoutButton;
 
-const Signinbutton = styled.button`
-  display: block;
+const Logoutbutton = styled.button`
   margin-right: 2rem;
   opacity: 1;
   color: white;
@@ -32,5 +31,16 @@ const Signinbutton = styled.button`
   }
   &:active {
     scale: 0.9;
+  }
+  @media (max-width: 1500px) {
+    font-size: 1.5rem;
+  }
+  @media only screen and (max-width: 768px) {
+    font-size: 1.25rem;
+    margin-right: 0;
+  }
+  @media only screen and (max-width: 425px) {
+    font-size: 1rem;
+    margin-right: 0;
   }
 `;

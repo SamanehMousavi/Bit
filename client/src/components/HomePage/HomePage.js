@@ -7,7 +7,7 @@ import { UserContext } from "../../UserContext";
 
 const HomePage = () => {
   const { user } = useAuth0();
-  const { currentUser, setCurrentUser } = useContext(UserContext);
+  const { setCurrentUser } = useContext(UserContext);
   useEffect(() => {
     document.title = "Bit";
 
@@ -99,14 +99,29 @@ const GradientBox = styled.div`
   height: 100%;
   z-index: -1;
   top: 0;
+  @media only screen and (max-width: 1024px) {
+    height: 130%;
+  }
+  @media only screen and (max-width: 700px) {
+    height: 120%;
+  }
+  @media only screen and (max-width: 350px) {
+    height: 110%;
+  }
 `;
 
 const HeroSection = styled.div`
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  height: 80vh;
-  margin: 1%;
+  height: 70vh;
+
+  @media only screen and (max-width: 1024px) {
+    justify-content: center;
+  }
+  @media only screen and (max-width: 768px) {
+    flex-direction: column;
+    margin-top: 5%;
+  }
 `;
 
 const imageOneFadeIn = keyframes`
@@ -137,6 +152,18 @@ const ImageOne = styled.img`
   width: 35%;
   align-self: flex-start;
   animation: ${imageOneFadeIn} 1s ease-in-out;
+
+  @media only screen and (max-width: 1024px) {
+    width: 30%;
+  }
+  @media only screen and (max-width: 768px) {
+    align-self: center;
+    width: 40%;
+  }
+  @media only screen and (max-width: 425px) {
+    align-self: center;
+    width: 70%;
+  }
 `;
 
 const ImageTwo = styled.img`
@@ -144,12 +171,39 @@ const ImageTwo = styled.img`
   width: 30%;
   align-self: flex-end;
   animation: ${imageTwoFadeIn} 1s ease-in-out;
+  @media only screen and (max-width: 1024px) {
+    width: 30%;
+  }
+  @media only screen and (max-width: 768px) {
+    align-self: center;
+    width: 40%;
+  }
+  @media only screen and (max-width: 425px) {
+    align-self: center;
+    width: 70%;
+  }
 `;
 const TextBox = styled.div`
   align-self: flex-end;
   color: black;
-  font-size: 2rem;
+  font-size: 1.5rem;
   opacity: 0.5;
   width: 30%;
-  margin: 5%;
+  padding: 5%;
+
+  @media (max-width: 1500px) {
+    align-self: center;
+  }
+  @media only screen and (max-width: 1024px) {
+    font-size: 1.25rem;
+    align-self: center;
+  }
+  @media only screen and (max-width: 768px) {
+    align-self: center;
+    width: 80%;
+  }
+
+  @media only screen and (max-width: 425px) {
+    font-size: 1rem;
+  }
 `;

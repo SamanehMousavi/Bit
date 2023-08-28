@@ -27,9 +27,11 @@ const updateProject = async (request, response) => {
     await client.connect();
     const db = client.db("FinalProject");
 
-    const findUser = await db.collection("Users").findOne({ _id: user });
-
-    const newProject = { ...findUser.Projects };
+    const userData = await db.collection("Users").find().toArray();
+    const user = userData.find((user) =>
+      Object.keys(user.Projects).includes(projectId)
+    );
+    const newProject = { ...user.Projects };
     newProject[projectId] = {
       _id: projectId,
       title: title,
@@ -42,7 +44,7 @@ const updateProject = async (request, response) => {
 
     await db
       .collection("Users")
-      .updateOne({ _id: user }, { $set: { Projects: newProject } });
+      .updateOne({ _id: user._id }, { $set: { Projects: newProject } });
     return response
       .status(200)
       .json({ status: 200, message: "Updated Project" });

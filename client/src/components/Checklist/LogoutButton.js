@@ -43,6 +43,17 @@ const Signoutbutton = styled.button`
   &:active {
     scale: 0.9;
   }
+  @media (max-width: 1500px) {
+    font-size: 1.5rem;
+  }
+  @media only screen and (max-width: 768px) {
+    font-size: 1.25rem;
+    margin-right: 0;
+  }
+  @media only screen and (max-width: 425px) {
+    font-size: 1rem;
+    margin-right: 0;
+  }
 `;
 
 const UserName = styled.div`
@@ -51,4 +62,15 @@ const UserName = styled.div`
   background-color: transparent;
   border: none;
   font-size: 2rem;
+  @media (max-width: 1500px) {
+    font-size: 1.5rem;
+  }
+  @media only screen and (max-width: 768px) {
+    font-size: 1.25rem;
+    margin-right: 0;
+  }
+  @media only screen and (max-width: 425px) {
+    font-size: 1rem;
+    margin-right: 0;
+  }
 `;

@@ -76,6 +76,7 @@ const ProjectDetails = () => {
       fetch(`/getProject/${user.email}/${projectId}`)
         .then((response) => response.json())
         .then((parsed) => {
+          // console.log(parsed.data);
           setFormData(parsed.data);
           setColumns(parsed.data.taskStatus);
         });
@@ -85,7 +86,7 @@ const ProjectDetails = () => {
           setUserList(parsed.data);
         });
     }
-  }, [user]);
+  }, [user, projectId]);
   const addTaskhandleChange = (event) => {
     setAddTask({
       ...addTask,
@@ -117,6 +118,7 @@ const ProjectDetails = () => {
     setAddTask({});
   };
   const handleSubmit = (e) => {
+    console.log(formData);
     fetch("/updateProject", {
       method: "PATCH",
       headers: {
@@ -164,8 +166,8 @@ const ProjectDetails = () => {
                   />
                   <label>Members Names</label>
                   <select
-                    id="membersName"
-                    name="membersName"
+                    id="member"
+                    name="member"
                     type="text"
                     onChange={handleChange}
                     style={{

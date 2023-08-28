@@ -2,36 +2,77 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { styled } from "styled-components";
 import LogoutButton from "../Checklist/LogoutButton";
+import { useAuth0 } from "@auth0/auth0-react";
+import { useState } from "react";
+import { Icon } from "react-icons-kit";
+import { navicon } from "react-icons-kit/fa/navicon";
 
 const Header = () => {
   const navigate = useNavigate();
+  const { user } = useAuth0();
+  const [open, setOpen] = useState(false);
+  const handleOpen = () => {
+    setOpen(!open);
+  };
+  const handleDropdownClick = (path) => {
+    setOpen(false);
+    navigate(path);
+  };
   return (
-    <HeaderMain>
-      <Logo
-        onClick={() => {
-          navigate("/");
-        }}
-      >
-        Bit
-      </Logo>
-      <TaskProject>
-        <Tasks
+    <>
+      <HeaderMain>
+        <Logo
           onClick={() => {
-            navigate("/checklist");
+            navigate("/");
           }}
         >
-          Manage Your Tasks
-        </Tasks>
-        <Projects
-          onClick={() => {
-            navigate("/projects");
-          }}
-        >
-          Manage Your Projects
-        </Projects>
-      </TaskProject>
-      <LogoutButton />
-    </HeaderMain>
+          Bit
+        </Logo>
+        {user && (
+          <TaskProject>
+            <Tasks
+              onClick={() => {
+                navigate("/checklist");
+              }}
+            >
+              Manage Your Tasks
+            </Tasks>
+            <Projects
+              onClick={() => {
+                navigate("/projects");
+              }}
+            >
+              Manage Your Projects
+            </Projects>
+          </TaskProject>
+        )}
+        <LogoutButton />
+      </HeaderMain>
+
+      {/* ////////////////////////////////// */}
+
+      <DropDown>
+        <Logo>Bit</Logo>
+        <Main onClick={handleOpen}>
+          <Icon icon={navicon} size={30} />
+        </Main>
+        {open && (
+          <DropDownContainer>
+            {user && (
+              <TaskProject>
+                <Tasks onClick={() => handleDropdownClick("/checklist")}>
+                  Manage Your Tasks
+                </Tasks>
+                <Projects onClick={() => handleDropdownClick("/projects")}>
+                  Manage Your Projects
+                </Projects>
+              </TaskProject>
+            )}
+            <LogoutButton />
+          </DropDownContainer>
+        )}
+      </DropDown>
+    </>
   );
 };
 
@@ -39,23 +80,60 @@ export default Header;
 
 const HeaderMain = styled.div`
   display: grid;
-  grid-template-columns: 10% 50% 40%;
+  grid-template-columns: 15% 60% 15%;
+  align-items: center;
   justify-items: end;
   height: 15%;
   opacity: 1;
   width: 100%;
+  @media (max-width: 1500px) {
+    grid-template-columns: 15% 60% 15%;
+  }
+  @media (max-width: 1024px) {
+    grid-template-columns: 20% 60% 20%;
+  }
+
+  @media only screen and (max-width: 768px) {
+    display: none;
+  }
 `;
+const DropDown = styled.div`
+  display: none;
+  @media only screen and (max-width: 768px) {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+  }
+`;
+const Main = styled.div`
+  cursor: pointer;
+`;
+const DropDownContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
 const Logo = styled.div`
   color: #00c4cc;
   opacity: 1;
   font-size: 8rem;
-  margin-top: 2rem;
+  margin-top: 1%;
+  @media (max-width: 1500px) {
+    font-size: 6rem;
+  }
+  @media only screen and (max-width: 768px) {
+    font-size: 5rem;
+  }
 `;
 
 const TaskProject = styled.div`
   display: flex;
-
   gap: 10%;
+  @media only screen and (max-width: 768px) {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+  }
 `;
 
 const Projects = styled.button`
@@ -71,6 +149,15 @@ const Projects = styled.button`
   &:active {
     scale: 0.9;
   }
+  @media (max-width: 1500px) {
+    font-size: 1.5rem;
+  }
+  @media only screen and (max-width: 768px) {
+    font-size: 1.25rem;
+  }
+  @media only screen and (max-width: 425px) {
+    font-size: 1rem;
+  }
 `;
 const Tasks = styled.button`
   color: #00c4cc;
@@ -84,5 +171,15 @@ const Tasks = styled.button`
   }
   &:active {
     scale: 0.9;
+  }
+  @media (max-width: 1500px) {
+    font-size: 1.5rem;
+  }
+  @media only screen and (max-width: 768px) {
+    font-size: 1.25rem;
+  }
+
+  @media only screen and (max-width: 425px) {
+    font-size: 1rem;
   }
 `;

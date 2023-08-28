@@ -90,7 +90,7 @@ const Projects = ({ boardId, projectId }) => {
                   );
 
                   return (
-                    <TableRow>
+                    <TableRow key={index}>
                       <ProjectRow align="center">
                         <a
                           onClick={() => {

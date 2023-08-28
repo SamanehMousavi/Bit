@@ -1,4 +1,4 @@
-import { styled, keyframes, css } from "styled-components";
+import { styled, keyframes } from "styled-components";
 import Header from "../Checklist/Header";
 import Calendar from "react-calendar";
 import { useEffect, useState } from "react";
@@ -19,7 +19,12 @@ const CheckList = () => {
 
   const Refresh = () => {
     fetch(`/tasklist/${value.toString().slice(0, 15)}/${currentUser.email}`)
-      .then((response) => response.json())
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        return response.json();
+      })
       .then((parsed) => {
         if (parsed.status === 404) {
           throw new Error(parsed.message);
@@ -139,7 +144,6 @@ const CheckList = () => {
     }
   };
 
-
   return (
     <Main>
       <Header />
@@ -165,14 +169,14 @@ const CheckList = () => {
                   handleSubmit(newTask, Object.values(task).length)
                 }
               >
-                <Icon icon={plus} size={50} />
+                <Icon icon={plus} size={30} />
               </AddButton>
             </AddTask>
             {Object.keys(task).map((key, index) => {
               return (
                 <Tasklines key={key}>
                   <Edit onClick={(event) => handleUpdate(task[key].task, key)}>
-                    <Icon icon={edit} size={50} />
+                    <Icon icon={edit} size={30} />
                   </Edit>
 
                   {/* {typeof task[key] === "string" ? ( */}
@@ -198,11 +202,11 @@ const CheckList = () => {
                   )} */}
 
                   <CheckMark onClick={() => applyLineThrough(key)}>
-                    <Icon icon={check} size={50} />
+                    <Icon icon={check} size={30} />
                   </CheckMark>
 
                   <Delete onClick={() => handleDelete(key)}>
-                    <Icon icon={trashO} size={50} />
+                    <Icon icon={trashO} size={30} />
                   </Delete>
                 </Tasklines>
               );
@@ -220,15 +224,23 @@ export default CheckList;
 const Main = styled.div`
   height: 100vh;
   width: 100vw;
-  margin: 0 auto;
 `;
 
 const Body = styled.div`
   height: 100%;
+  margin: 0 auto;
   width: 100%;
   display: flex;
   position: relative;
-  // align-items: center;
+  align-items: center;
+  @media only screen and (max-width: 1024px) {
+    flex-direction: column;
+  }
+
+  @media only screen and (max-width: 768px) {
+  }
+  @media only screen and (max-width: 425px) {
+  }
 `;
 
 const gradientAnimation = keyframes`
@@ -246,12 +258,20 @@ const GradientBox = styled.div`
   position: absolute;
   width: 100%;
   height: 85%;
-  bottom: 0;
+  bottom: 5%;
   background-image: linear-gradient(-30deg, #00c4cc, #ff66c4, pink);
   background-size: 200% 200%;
   animation: ${gradientAnimation} 10s linear infinite;
   transform: skewY(-10deg);
   z-index: -2;
+  @media only screen and (max-width: 1024px) {
+    top: 25%;
+  }
+  @media only screen and (max-width: 768px) {
+  }
+  @media only screen and (max-width: 425px) {
+    top: 45%;
+  }
 `;
 
 const CalendarContainer = styled.div`
@@ -269,6 +289,12 @@ const CalendarContainer = styled.div`
   .react-calendar__navigation__label {
     font-weight: bold;
     font-size: 1.5rem;
+    @media only screen and (max-width: 1024px) {
+      font-size: 1.25rem;
+    }
+    @media only screen and (max-width: 768px) {
+      font-size: 1rem;
+    }
   }
   .react-calendar__navigation__arrow {
     flex-grow: 0.333;
@@ -293,12 +319,29 @@ const CalendarContainer = styled.div`
     &:active {
       background-color: pink;
     }
+    @media only screen and (max-width: 1024px) {
+      font-size: 1.25rem;
+    }
+    @media only screen and (max-width: 768px) {
+      font-size: 1rem;
+    }
   }
   .react-calendar__month-view__days__day--neighboringMonth {
     opacity: 0.5;
   }
   .react-calendar__month-view__days__day--weekend {
     color: #dfdfdf;
+  }
+  @media only screen and (max-width: 1024px) {
+    max-width: 35%;
+    font-size: 1.25rem;
+  }
+  @media only screen and (max-width: 768px) {
+    max-width: 40%;
+    font-size: 1rem;
+  }
+  @media only screen and (max-width: 425px) {
+    max-width: 60%;
   }
 `;
 const listContainerFadeIn = keyframes`
@@ -316,30 +359,48 @@ const listContainerFadeIn = keyframes`
 
 const ListContainer = styled.div`
   background-image: url("./images/stickyn.png");
+  background-position: center;
   background-size: contain;
   background-repeat: no-repeat;
   z-inex: 2;
-  width: 70%;
-  height: 100%;
+  width:100%;
+  height: 80%;
   display: flex;
   flex-direction: column;
-  gap: 5%;
-  align-items: flex-start;
+  align-items: center;
+
   animation: ${listContainerFadeIn} 2s ease-in-out;
+  @media only screen and (max-width: 1024px) {
+height:500%;
+    width:500%;
+    margin-left:10%;
+    
+  @media only screen and (max-width: 768px) {
+    height:400%;
+    width:400%;
+  }
+  @media only screen and (max-width: 425px) {
+    height:225%;
+    width:225%;
+ 
+  }
 `;
 const ListHeader = styled.div`
   color: black;
   border-radius: 0.5rem;
-  display: flex;
-  font-size: 2rem;
-  height: 5%;
-  width: 50%;
-  align-items: center;
-  justify-content: space-around;
-  padding: 1rem;
-  gap: 5%;
-  margin-top: 10%;
-  margin-left: 5%;
+  font-size: 1.5rem;
+  padding: 2rem;
+  width: 40%;
+  margin-top: 5%;
+  font-weight: bold;
+  @media only screen and (max-width: 1024px) {
+    font-size: 1.25rem;
+  }
+  @media only screen and (max-width: 425px) {
+    font-size: 1rem;
+  }
+  @media only screen and (max-width: 375px) {
+  }
 `;
 
 const Date = styled.div``;
@@ -347,32 +408,33 @@ const Date = styled.div``;
 const List = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 5%;
-  height: 100%;
-  width: 60%;
-  margin-left: 5%;
+  align-items: center;
 `;
 const AddTask = styled.div`
-  width: 100%;
   display: flex;
-  justify-content: center;
   align-items: center;
 `;
 const Input = styled.input`
   color: #cb6ce6;
   font-weight: bold;
-  width: 80%;
   padding: 1%;
-  font-size: 2rem;
+  font-size: 1.5rem;
   border-radius: 0.5rem;
   border: none;
   box-shadow: 0 0.1rem 0.2rem 0 #808080, 0 0.1rem 0.2rem #808080;
   background-color: transparent;
+  @media only screen and (max-width: 1024px) {
+    font-size: 1.25rem;
+  }
+  @media only screen and (max-width: 768px) {
+    font-size: 1rem;
+  }
 `;
 const AddButton = styled.button`
   background-color: transparent;
   border: none;
   width: 5%;
+  color: black;
   &:hover {
     color: #cb6ce6;
   }
@@ -382,25 +444,26 @@ const AddButton = styled.button`
 `;
 
 const Tasklines = styled.ul`
-  width: 100%;
-  height: 5%;
   display: flex;
-  flex-direction: row;
-  align-items: flex-start;
-  justify-content: space-between;
-  list-style: none;
+  align-items: center;
+  gap: 1%;
 `;
 const TaskInput = styled.input`
   color: #cb6ce6;
-  width: 70%;
   padding: 1%;
   font-weight: bold;
-  font-size: 2rem;
+  font-size: 1.5rem;
   border-radius: 0.5rem;
   border: none;
   box-shadow: 0 0.1rem 0.2rem 0 #808080, 0 0.1rem 0.2rem #808080;
   background-color: transparent;
   margin: 1.5%;
+  @media only screen and (max-width: 1024px) {
+    font-size: 1.25rem;
+  }
+  @media only screen and (max-width: 768px) {
+    font-size: 1rem;
+  }
 `;
 const Delete = styled.button`
   background-color: transparent;
@@ -420,4 +483,11 @@ const Edit = styled.div`
     cursor: pointer;
   }
 `;
-const CheckMark = styled.div``;
+const CheckMark = styled.div`
+  margin: 0.1rem;
+  width: 5%;
+  &:hover {
+    color: green;
+    cursor: pointer;
+  }
+`;

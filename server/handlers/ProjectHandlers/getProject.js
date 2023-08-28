@@ -19,11 +19,13 @@ const getProject = async (request, response) => {
     await client.connect();
     const db = client.db("FinalProject");
 
-    const projectData = await db.collection("Users").findOne({ _id: user });
+    const userData = await db.collection("Users").find().toArray();
 
-    response
-      .status(200)
-      .json({ status: 200, data: projectData.Projects[projectId] });
+    const user = userData.find((user) =>
+      Object.keys(user.Projects).includes(projectId)
+    );
+
+    response.status(200).json({ status: 200, data: user.Projects[projectId] });
   } catch (error) {
     (error) => console.log(error);
     response.status(500).json({ status: 500, message: error.message });

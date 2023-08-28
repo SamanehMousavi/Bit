@@ -1,5 +1,5 @@
 "use strict";
-const { uuid } = require("uuidv4");
+const { v4 } = require("uuid");
 const { MongoClient } = require("mongodb");
 
 require("dotenv").config();
@@ -13,12 +13,13 @@ const options = {
 const addProject = async (request, response) => {
   const client = new MongoClient(MONGO_URI, options);
   const { user, title, dueDate, description, taskData, member } = request.body;
-  const index = uuid();
+  const index = v4();
   try {
     await client.connect();
     const db = client.db("FinalProject");
 
     const findUser = await db.collection("Users").findOne({ _id: user });
+
     const newProject = { ...findUser.Projects };
     newProject[index] = {
       _id: index,
