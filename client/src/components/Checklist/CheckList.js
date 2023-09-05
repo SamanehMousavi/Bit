@@ -224,11 +224,11 @@ export default CheckList;
 const Main = styled.div`
   height: 100vh;
   width: 100vw;
+  margin: 0 auto;
 `;
 
 const Body = styled.div`
   height: 100%;
-  margin: 0 auto;
   width: 100%;
   display: flex;
   position: relative;
