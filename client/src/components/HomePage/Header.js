@@ -105,6 +105,9 @@ const DropDown = styled.div`
     flex-direction: column;
     margin-bottom: 20%;
   }
+  @media only screen and (max-width: 425px) {
+    margin-bottom: 30%;
+  }
 `;
 const Main = styled.div`
   cursor: pointer;

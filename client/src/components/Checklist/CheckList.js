@@ -18,14 +18,22 @@ const CheckList = () => {
   const [checked, setChecked] = useState({});
 
   const Refresh = () => {
-    fetch(`/tasklist/${value.toString().slice(0, 15)}/${currentUser.email}`)
+    console.log("beforeRefresh");
+    fetch(
+      `https://bit-api.onrender.com/tasklist/${value.toString().slice(0, 15)}/${
+        currentUser.email
+      }`
+    )
       .then((response) => {
+        console.log("response");
         if (!response.ok) {
           throw new Error("Network response was not ok");
         }
         return response.json();
       })
+
       .then((parsed) => {
+        console.log("parsed");
         if (parsed.status === 404) {
           throw new Error(parsed.message);
         }
@@ -45,9 +53,9 @@ const CheckList = () => {
 
   const handleDelete = (index) => {
     fetch(
-      `/deletetask/${value.toString().slice(0, 15)}/${
-        currentUser.email
-      }/${index}`,
+      `https://bit-api.onrender.com/deletetask/${value
+        .toString()
+        .slice(0, 15)}/${currentUser.email}/${index}`,
       {
         method: "DELETE",
         headers: {
@@ -67,7 +75,7 @@ const CheckList = () => {
 
   const handleUpdate = (input, index) => {
     setTask({});
-    fetch("/updatetask", {
+    fetch("https://bit-api.onrender.com/updatetask", {
       method: "PATCH",
       headers: {
         Accept: "application/json",
@@ -95,7 +103,7 @@ const CheckList = () => {
     //   ...task,
     //   [key]: { id: key, task: task[key].task, completed: !task[key].completed },
     // });
-    fetch("/updatetask", {
+    fetch("https://bit-api.onrender.com/updatetask", {
       method: "PATCH",
       headers: {
         Accept: "application/json",
@@ -120,7 +128,7 @@ const CheckList = () => {
 
   const handleSubmit = (input, index) => {
     if (input.length > 0) {
-      fetch("/addtask", {
+      fetch("https://bit-api.onrender.com/addtask", {
         method: "POST",
         headers: {
           Accept: "application/json",
@@ -143,6 +151,15 @@ const CheckList = () => {
         .catch((error) => console.log(error));
     }
   };
+  const iconStyle = {
+    cursor: "pointer",
+  };
+
+  if (window.innerWidth < 600) {
+    iconStyle.size = "25px";
+  } else {
+    iconStyle.size = "35px";
+  }
 
   return (
     <Main>
@@ -163,20 +180,21 @@ const CheckList = () => {
                   setNewTask(event.target.value);
                 }}
                 value={newTask}
+                size={28}
               />
               <AddButton
                 onClick={() =>
                   handleSubmit(newTask, Object.values(task).length)
                 }
               >
-                <Icon icon={plus} size={30} />
+                <Icon icon={plus} style={iconStyle} />
               </AddButton>
             </AddTask>
             {Object.keys(task).map((key, index) => {
               return (
                 <Tasklines key={key}>
                   <Edit onClick={(event) => handleUpdate(task[key].task, key)}>
-                    <Icon icon={edit} size={30} />
+                    <Icon icon={edit} style={iconStyle} />
                   </Edit>
 
                   {/* {typeof task[key] === "string" ? ( */}
@@ -202,11 +220,11 @@ const CheckList = () => {
                   )} */}
 
                   <CheckMark onClick={() => applyLineThrough(key)}>
-                    <Icon icon={check} size={30} />
+                    <Icon icon={check} style={iconStyle} />
                   </CheckMark>
 
                   <Delete onClick={() => handleDelete(key)}>
-                    <Icon icon={trashO} size={30} />
+                    <Icon icon={trashO} style={iconStyle} />
                   </Delete>
                 </Tasklines>
               );
@@ -236,11 +254,6 @@ const Body = styled.div`
   @media only screen and (max-width: 1024px) {
     flex-direction: column;
   }
-
-  @media only screen and (max-width: 768px) {
-  }
-  @media only screen and (max-width: 425px) {
-  }
 `;
 
 const gradientAnimation = keyframes`
@@ -257,20 +270,18 @@ const gradientAnimation = keyframes`
 const GradientBox = styled.div`
   position: absolute;
   width: 100%;
-  height: 85%;
-  bottom: 5%;
+  height: 100%;
   background-image: linear-gradient(-30deg, #00c4cc, #ff66c4, pink);
   background-size: 200% 200%;
   animation: ${gradientAnimation} 10s linear infinite;
   transform: skewY(-10deg);
   z-index: -2;
   @media only screen and (max-width: 1024px) {
-    top: 25%;
+    top: 5%;
+    height: 90%;
   }
-  @media only screen and (max-width: 768px) {
-  }
-  @media only screen and (max-width: 425px) {
-    top: 45%;
+  @media only screen and (max-width: 1024px) {
+    top: 5%;
   }
 `;
 
@@ -281,18 +292,15 @@ const CalendarContainer = styled.div`
   background-color: #00c4cc;
   color: white;
   border-radius: 0.5rem;
-  font-size: 1.5rem;
+  font-size: 1.25rem;
 
   .react-calendar__navigation {
     display: flex;
   }
   .react-calendar__navigation__label {
     font-weight: bold;
-    font-size: 1.5rem;
+    font-size: 1.25rem;
     @media only screen and (max-width: 1024px) {
-      font-size: 1.25rem;
-    }
-    @media only screen and (max-width: 768px) {
       font-size: 1rem;
     }
   }
@@ -305,7 +313,7 @@ const CalendarContainer = styled.div`
   }
 
   button {
-    font-size: 1.5rem;
+    font-size: 1.25rem;
     background-color: transparent;
     border: 0;
     border-radius: 3px;
@@ -320,9 +328,6 @@ const CalendarContainer = styled.div`
       background-color: pink;
     }
     @media only screen and (max-width: 1024px) {
-      font-size: 1.25rem;
-    }
-    @media only screen and (max-width: 768px) {
       font-size: 1rem;
     }
   }
@@ -333,15 +338,14 @@ const CalendarContainer = styled.div`
     color: #dfdfdf;
   }
   @media only screen and (max-width: 1024px) {
-    max-width: 35%;
-    font-size: 1.25rem;
+    max-width: 30%;
+    font-size: 1rem;
   }
   @media only screen and (max-width: 768px) {
     max-width: 40%;
-    font-size: 1rem;
   }
   @media only screen and (max-width: 425px) {
-    max-width: 60%;
+    max-width: 65%;
   }
 `;
 const listContainerFadeIn = keyframes`
@@ -362,44 +366,44 @@ const ListContainer = styled.div`
   background-position: center;
   background-size: contain;
   background-repeat: no-repeat;
+  width: 100%;
+  height: 100%;
   z-inex: 2;
-  width:100%;
-  height: 80%;
   display: flex;
   flex-direction: column;
+  justify-content: flex-start;
   align-items: center;
-
   animation: ${listContainerFadeIn} 2s ease-in-out;
+
   @media only screen and (max-width: 1024px) {
-height:500%;
-    width:500%;
-    margin-left:10%;
-    
-  @media only screen and (max-width: 768px) {
-    height:400%;
-    width:400%;
+    height: 50%;
   }
-  @media only screen and (max-width: 425px) {
-    height:225%;
-    width:225%;
- 
+  @media only screen and (max-width: 820px) {
+    height: 44%;
+  }
+
+  @media only screen and (max-width: 414px) {
+    height: 43%;
   }
 `;
 const ListHeader = styled.div`
+  text-align: center;
   color: black;
   border-radius: 0.5rem;
-  font-size: 1.5rem;
-  padding: 2rem;
-  width: 40%;
-  margin-top: 5%;
+  font-size: 1.25rem;
+  padding: 1.5rem;
+  margin-top: 10%;
   font-weight: bold;
   @media only screen and (max-width: 1024px) {
-    font-size: 1.25rem;
-  }
-  @media only screen and (max-width: 425px) {
     font-size: 1rem;
+    margin-top: 2%;
   }
+
   @media only screen and (max-width: 375px) {
+    font-size: 0.95rem;
+  }
+  @media only screen and (max-width: 320px) {
+    margin-top: 5%;
   }
 `;
 
@@ -421,6 +425,7 @@ const Input = styled.input`
   font-size: 1.5rem;
   border-radius: 0.5rem;
   border: none;
+  width: 80%;
   box-shadow: 0 0.1rem 0.2rem 0 #808080, 0 0.1rem 0.2rem #808080;
   background-color: transparent;
   @media only screen and (max-width: 1024px) {
@@ -428,6 +433,9 @@ const Input = styled.input`
   }
   @media only screen and (max-width: 768px) {
     font-size: 1rem;
+  }
+  @media only screen and (max-width: 320px) {
+    font-size: 0.8rem;
   }
 `;
 const AddButton = styled.button`
@@ -446,7 +454,17 @@ const AddButton = styled.button`
 const Tasklines = styled.ul`
   display: flex;
   align-items: center;
+  width: 100%;
   gap: 1%;
+  @media only screen and (max-width: 1024px) {
+    width: 90%;
+  }
+  @media only screen and (max-width: 768px) {
+    width: 100%;
+  }
+  @media only screen and (max-width: 425px) {
+    width: 85%;
+  }
 `;
 const TaskInput = styled.input`
   color: #cb6ce6;
@@ -455,20 +473,24 @@ const TaskInput = styled.input`
   font-size: 1.5rem;
   border-radius: 0.5rem;
   border: none;
+  width: 80%;
   box-shadow: 0 0.1rem 0.2rem 0 #808080, 0 0.1rem 0.2rem #808080;
   background-color: transparent;
-  margin: 1.5%;
+  margin: 2%;
   @media only screen and (max-width: 1024px) {
     font-size: 1.25rem;
   }
   @media only screen and (max-width: 768px) {
     font-size: 1rem;
   }
+  @media only screen and (max-width: 320px) {
+    font-size: 0.8rem;
+  }
 `;
 const Delete = styled.button`
   background-color: transparent;
   border: none;
-  width: 5%;
+  margin: 0.1rem;
   &:hover {
     color: red;
     cursor: pointer;
@@ -477,7 +499,7 @@ const Delete = styled.button`
 
 const Edit = styled.div`
   margin: 0.1rem;
-  width: 5%;
+
   &:hover {
     color: green;
     cursor: pointer;
@@ -485,7 +507,7 @@ const Edit = styled.div`
 `;
 const CheckMark = styled.div`
   margin: 0.1rem;
-  width: 5%;
+
   &:hover {
     color: green;
     cursor: pointer;

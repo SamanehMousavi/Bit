@@ -36,5 +36,6 @@ const Signinbutton = styled.button`
   @media only screen and (max-width: 425px) {
     font-size: 1rem;
     margin-right: 0;
+    margin-bottom: 5%;
   }
 `;

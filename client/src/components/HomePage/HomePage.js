@@ -18,7 +18,7 @@ const HomePage = () => {
 
   useEffect(() => {
     if (user) {
-      fetch("/addUser", {
+      fetch("https://bit-api.onrender.com/addUser", {
         method: "POST",
         headers: {
           Accept: "application/json",
@@ -28,7 +28,6 @@ const HomePage = () => {
       })
         .then((response) => response.json())
         .then((parsed) => {
-          console.log(parsed);
           window.localStorage.setItem("user", JSON.stringify(user));
           setCurrentUser(user);
         })
@@ -105,8 +104,8 @@ const GradientBox = styled.div`
   @media only screen and (max-width: 700px) {
     height: 120%;
   }
-  @media only screen and (max-width: 350px) {
-    height: 110%;
+  @media only screen and (max-width: 425px) {
+    height: 125%;
   }
 `;
 
@@ -158,7 +157,7 @@ const ImageOne = styled.img`
   }
   @media only screen and (max-width: 768px) {
     align-self: center;
-    width: 40%;
+    width: 40%;n
   }
   @media only screen and (max-width: 425px) {
     align-self: center;
